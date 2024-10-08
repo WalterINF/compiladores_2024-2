@@ -32,9 +32,9 @@ return                     {return KW_RETURN;}
 "/**"                      { BEGIN(MULTILINE_COMMENT); }
 [a-zA-Z0-9]+               {TK_IDENTIFIER;}
 
+<MULTILINE_COMMENT>\\n     { line_count++; }
 <MULTILINE_COMMENT>"**/"   { BEGIN(INITIAL); }
 <MULTILINE_COMMENT>.       { }
-<MULTILINE_COMMENT>\\n     { line_count++; }
 
 [a-zA-Z0-9]+ {TK_IDENTIFIER;}
 
