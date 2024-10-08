@@ -2,8 +2,10 @@
 #include <stdio.h>
 #include <string.h>
 #include "tokens.h"
+#include "Symbols.h"
 
 int line_count = 0;
+int is_running = 1;
 %}
 
 NEWLINE \\n
@@ -20,42 +22,47 @@ MULTILINE_COMMENT \/\*\*(.*?)\*\*\/
 
 
 
-\\n {line_count++; printf("nova linha");} 
-char {printf("palavra char");}
-int {printf("palavra read");}
-if {printf("comando if");}
-then {printf("comando then");}
-else {printf("comando else");}
-while {printf("comando while");}
-read {printf("comando read");}
-print {printf("comando print");}
-return {printf("comando return");}
+\\n {line_count++;}
 
-[#][0-9]+ {printf("literal numero");}
+char {return KW_CHAR;}
+int {return KW_INT;}
 
-\"([^\"\\]|\\.)*\" {printf("literal string");}
+if {return KW_IF;}
+then {return KW_THEN;}
+else {return KW_ELSE;}
+while {return KW_WHILE;}
+read {return KW_READ;}
+print {return KW_PRINT;}
+return {return KW_RETURN;}
 
-'(.|\\.)' {printf("literal caractere");}
+[#][0-9]+ {return LIT_INT;}
+\"([^\"\\]|\\.)*\" {return LIT_STRING;}
+'(.|\\.)' {return LIT_CHAR;}
 
-[;,():\[\]{}=+\-*/%<>&\\~] {printf("%d",yytext[0]);}
+[;,():\[\]{}=+\-*/%<>&\\~] {return (int)yytext[0];}
 
-\/\/(.*?)\\n {printf("comentario");}
+\/\/(.*?)\\n
 
-\/\*\*(.*?)\*\*\/ {printf("comentario multilinha");}
+\/\*\*(.*?)\*\*\/
 
-[a-zA-Z0-9]+ {printf("identificador");}
-
-
-
+[a-zA-Z0-9]+ {TK_IDENTIFIER;}
 
 %%
 
-
-int yywrap(){
-  return 1;
+int getLineNumber(void){
+	return line_count;
 }
 
-main(){
+int isRunning(void){
+	return is_running;
+}
+
+int yywrap(){
+    is_running = 0;
+    return 1;
+}
+
+int main(){
   yylex();
 }
 

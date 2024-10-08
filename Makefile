@@ -1,18 +1,19 @@
 CXX = g++
-CXXFLAGS = -std = c++11 -Wall
+CXXFLAGS = -Wall -std=c++11
 
 target: etapa1
 
-etapa1: lex.yy.c
-		$(CXX) lex.yy.c -o etapa1
+etapa1: lex.yy.o main.o Symbols.o
+	$(CXX) -o etapa1 lex.yy.o main.o Symbols.o
 
 %.o: %.cpp
-	$(CXX) $(CXXFLAGS) $ < -c
+	$(CXX) $(CXXFLAGS) $< -c
 
 lex.yy.cpp: scanner.l
-	flex scanner.l
+	flex -o lex.yy.cpp scanner.l
 
 clean:
 	rm etapa1 lex.yy.cpp
+
 
 
