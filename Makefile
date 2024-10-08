@@ -13,7 +13,7 @@ lex.yy.cpp: scanner.l
 	flex -o lex.yy.cpp scanner.l
 
 clean:
-	rm etapa1 lex.yy.cpp
+	rm etapa1 lex.yy.cpp *.o
 
 
 

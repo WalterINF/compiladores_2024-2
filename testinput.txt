@@ -1,0 +1,7 @@
+int value = #545;
+
+if(value > #600) then{
+    return #0;
+} else {
+    return 1;
+}
