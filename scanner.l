@@ -8,42 +8,33 @@ int line_count = 0;
 int is_running = 1;
 %}
 
-NEWLINE \\n
-IDENTIFIER [a-zA-Z0-9]+
-LITERAL_NUM [#][0-9]+
-LITERAL_CHAR '(.|\\.)'
-LITERAL_STRING \"([^\"\\]|\\.)*\"
-SPEC_CHAR [;,():\[\]{}=+\-*/%<>&\\~]
-INLINE_COMMENT \/\/(.*?)\\n
-MULTILINE_COMMENT \/\*\*(.*?)\*\*\/
 
-%%
+%x MULTILINE_COMMENT
 
 
 
 
-\\n {line_count++;}
-
-char {return KW_CHAR;}
-int {return KW_INT;}
-
-if {return KW_IF;}
-then {return KW_THEN;}
-else {return KW_ELSE;}
-while {return KW_WHILE;}
-read {return KW_READ;}
-print {return KW_PRINT;}
-return {return KW_RETURN;}
-
-[#][0-9]+ {return LIT_INT;}
-\"([^\"\\]|\\.)*\" {return LIT_STRING;}
-'(.|\\.)' {return LIT_CHAR;}
-
+\\n                        { line_count++; }
+char                       {return KW_CHAR;}
+int                        {return KW_INT; }
+if                         {return KW_IF;); }
+then                       {return KW_THEN;}
+else                       {return KW_ELSE; }
+while                      {return KW_WHILE; }
+read                       {return KW_READ; }
+print                      {return KW_PRINT; }
+return                     {return KW_RETURN;}
+[#][0-9]+                  {return LIT_INT; }
+\"([^\"\\]|\\.)*\"         {return LIT_STRING;}
+'(.|\\.)'                  {return LIT_CHAR;}
 [;,():\[\]{}=+\-*/%<>&\\~] {return (int)yytext[0];}
-
 \/\/(.*?)\\n
+"/**"                      { BEGIN(MULTILINE_COMMENT); }
+[a-zA-Z0-9]+               {TK_IDENTIFIER;}
 
-\/\*\*(.*?)\*\*\/
+<MULTILINE_COMMENT>"**/"   { BEGIN(INITIAL); }
+<MULTILINE_COMMENT>.       { }
+<MULTILINE_COMMENT>\\n     { line_count++; }
 
 [a-zA-Z0-9]+ {TK_IDENTIFIER;}
 
