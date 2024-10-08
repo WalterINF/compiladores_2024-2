@@ -12,19 +12,19 @@ int is_running = 1;
 %x MULTILINE_COMMENT
 
 
+%%
 
-
-\\n                        { line_count++; }
+\\n                        { line_count++;}
 char                       {return KW_CHAR;}
-int                        {return KW_INT; }
-if                         {return KW_IF;); }
+int                        {return KW_INT;}
+if                         {return KW_IF;}
 then                       {return KW_THEN;}
-else                       {return KW_ELSE; }
-while                      {return KW_WHILE; }
-read                       {return KW_READ; }
-print                      {return KW_PRINT; }
+else                       {return KW_ELSE;}
+while                      {return KW_WHILE;}
+read                       {return KW_READ;}
+print                      {return KW_PRINT;}
 return                     {return KW_RETURN;}
-[#][0-9]+                  {return LIT_INT; }
+[#][0-9]+                  {return LIT_INT;}
 \"([^\"\\]|\\.)*\"         {return LIT_STRING;}
 '(.|\\.)'                  {return LIT_CHAR;}
 [;,():\[\]{}=+\-*/%<>&\\~] {return (int)yytext[0];}
