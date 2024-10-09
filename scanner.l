@@ -38,7 +38,7 @@ return                     {return KW_RETURN;}
 \/\/(.*?)\n               {line_count++;}
 "/**"                      {BEGIN(MULTILINE_COMMENT);}
 
-<MULTILINE_COMMENT>\\n     {line_count++;}
+<MULTILINE_COMMENT>\n     {line_count++;}
 <MULTILINE_COMMENT>"**/"   {BEGIN(INITIAL);}
 <MULTILINE_COMMENT>.       { }
 
