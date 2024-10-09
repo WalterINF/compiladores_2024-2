@@ -3,14 +3,14 @@ int age = #45;
 char btype = 'A';
 
 if(age > #17){
-    autorize("nivaldo");
+    authorize(name);
 } else{
-    revoke("nivaldo");
+    revoke(name);
 }
 
 return #0;
 
-//lixo
+//aleatoriedades
 b
 str
 return
