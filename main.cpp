@@ -1,11 +1,11 @@
-//
-// Created by walter on 08/10/24.
-//
+/*
+Etapa1 - Trabalho Final - compiladores - 2024/2
+Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
+ */
 
 #include <iostream>
 #include <stdio.h>
 #include "tokens.h"
-#include "Symbols.h"
 #include <map>
 #include <string>
 
@@ -13,6 +13,8 @@ int yylex();
 extern char *yytext;
 extern FILE *yyin;
 extern std::map<std::string,int> symbol_table;
+extern void insertSymbol(std::map<std::string, int> *table, char* symbol, int type);
+extern void printSymbols(std::map<std::string, int> table);
 
 
 int getLineNumber();
@@ -40,6 +42,7 @@ int main(int argc, char** argv){
       		break;
 
 		switch(kw){
+            case KW_CHAR: fprintf(stderr, "KW_CHAR (%d) on line: %d\n", kw, getLineNumber()); break;
 			case KW_INT:  fprintf(stderr, "KW_INT (%d) on line: %d \n", kw, getLineNumber()); break;
    			case KW_IF:   fprintf(stderr, "KW_IF (%d) on line: %d \n", kw, getLineNumber()); break;
    			case KW_THEN: fprintf(stderr, "KW_THEN (%d) on line: %d \n", kw, getLineNumber()); break;

@@ -1,4 +1,8 @@
 %{
+/*
+Etapa1 - Trabalho Final - compiladores - 2024/2
+Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
+ */
 #include <stdio.h>
 #include <string.h>
 #include "tokens.h"
@@ -26,12 +30,12 @@ read                       {return KW_READ;}
 print                      {return KW_PRINT;}
 return                     {return KW_RETURN;}
 
-[#][0-9]+                  {return LIT_INT;}
-\"([^\"\\]|\\.)*\"         {return LIT_STRING;}
-'(.|\\.)'                  {return LIT_CHAR;}
+[#][0-9]+                  {insertSymbol(&symbol_table, &yytext[0], LIT_INT); return LIT_INT;}
+\"([^\"\\]|\\.)*\"         {insertSymbol(&symbol_table, &yytext[0], LIT_STRING); return LIT_STRING;}
+'(.|\\.)'                  {insertSymbol(&symbol_table, &yytext[0], LIT_CHAR); return LIT_CHAR;}
 
 [;,():\[\]{}=+\-*/%<>&\\~] {return (int)yytext[0];}
-\/\/(.*?)\\n               {line_count++;}
+\/\/(.*?)\n               {line_count++;}
 "/**"                      {BEGIN(MULTILINE_COMMENT);}
 
 <MULTILINE_COMMENT>\\n     {line_count++;}

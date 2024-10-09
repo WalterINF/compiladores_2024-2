@@ -1,3 +1,8 @@
+/*
+Etapa1 - Trabalho Final - compiladores - 2024/2
+Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
+ */
+
 //
 // Created by walter on 08/10/24.
 //

@@ -1,7 +1,25 @@
-int value = #545;
+string name = "nivaldo";
+int age = #45;
+char btype = 'A';
 
-if(value > #600) then{
-    return #0;
-} else {
-    return #1;
+if(age > #17){
+    autorize("nivaldo");
+} else{
+    revoke("nivaldo");
 }
+
+return #0;
+
+//lixo
+b
+str
+return
+elsa
+whole
+;;;;===
+'rrrr'
+ret
+"fdsgd\"gdsg"
+"string_sepa"rado_erro"
+
+
