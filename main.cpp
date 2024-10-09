@@ -42,20 +42,21 @@ int main(int argc, char** argv){
       		break;
 
 		switch(kw){
-            case KW_CHAR: fprintf(stderr, "KW_CHAR (%d) on line: %d\n", kw, getLineNumber()); break;
-			case KW_INT:  fprintf(stderr, "KW_INT (%d) on line: %d \n", kw, getLineNumber()); break;
-   			case KW_IF:   fprintf(stderr, "KW_IF (%d) on line: %d \n", kw, getLineNumber()); break;
-   			case KW_THEN: fprintf(stderr, "KW_THEN (%d) on line: %d \n", kw, getLineNumber()); break;
-   			case KW_ELSE: fprintf(stderr, "KW_ELSE (%d) on line: %d \n", kw, getLineNumber()); break;
-   			case KW_READ: fprintf(stderr, "KW_READ (%d) on line: %d \n", kw, getLineNumber()); break;
-   			case KW_RETURN: fprintf(stderr, "KW_RETURN (%d) on line: %d \n", kw, getLineNumber()); break;
-   			case KW_PRINT: fprintf(stderr, "KW_PRINT (%d) on line: %d \n", kw, getLineNumber()); break;
-   			case TK_IDENTIFIER: fprintf(stderr, "TK_IDENTIFIER (%d) on line: %d \n", kw, getLineNumber()); break;
-   			case LIT_INT: fprintf(stderr, "LIT_INT (%d) on line: %d \n", kw, getLineNumber()); break;
-   			case LIT_STRING: fprintf(stderr, "LIT_STRING (%d) on line: %d \n", kw, getLineNumber()); break;
-			case LIT_CHAR: fprintf(stderr, "LIT_CHAR (%d) on line: %d \n", kw, getLineNumber()); break;
-   			case TOKEN_ERROR: fprintf(stderr, "TOKEN_ERROR (%d) on line: %d \n", kw, getLineNumber()); break;
-			default: fprintf(stderr, "CARACTERE ESPECIAL (%d) on line: %d \n", kw, getLineNumber()); break;
+            case KW_CHAR: fprintf(stderr, "KW_CHAR (%s) on line: %d\n",yytext, getLineNumber()); break;
+			case KW_INT:  fprintf(stderr, "KW_INT (%s) on line: %d \n", yytext, getLineNumber()); break;
+   			case KW_IF:   fprintf(stderr, "KW_IF (%s) on line: %d \n", yytext, getLineNumber()); break;
+   			case KW_THEN: fprintf(stderr, "KW_THEN (%s) on line: %d \n", yytext, getLineNumber()); break;
+   			case KW_ELSE: fprintf(stderr, "KW_ELSE (%s) on line: %d \n", yytext, getLineNumber()); break;
+            case KW_WHILE: fprintf(stderr, "KW_WHILE (%s) on line: %d \n", yytext, getLineNumber()); break;
+   			case KW_READ: fprintf(stderr, "KW_READ (%s) on line: %d \n", yytext, getLineNumber()); break;
+   			case KW_RETURN: fprintf(stderr, "KW_RETURN (%s) on line: %d \n", yytext, getLineNumber()); break;
+   			case KW_PRINT: fprintf(stderr, "KW_PRINT (%s) on line: %d \n", yytext, getLineNumber()); break;
+   			case TK_IDENTIFIER: fprintf(stderr, "TK_IDENTIFIER (%s) on line: %d \n", yytext, getLineNumber()); break;
+   			case LIT_INT: fprintf(stderr, "LIT_INT (%s) on line: %d \n", yytext, getLineNumber()); break;
+   			case LIT_STRING: fprintf(stderr, "LIT_STRING (%s) on line: %d \n", yytext, getLineNumber()); break;
+			case LIT_CHAR: fprintf(stderr, "LIT_CHAR (%s) on line: %d \n", yytext, getLineNumber()); break;
+   			case TOKEN_ERROR: fprintf(stderr, "TOKEN_ERROR (%s) on line: %d \n", yytext, getLineNumber()); break;
+			default: fprintf(stderr, "CARACTERE ESPECIAL (%s) on line: %d \n", yytext, getLineNumber()); break;
 		}
 	}
     printSymbols(symbol_table);
