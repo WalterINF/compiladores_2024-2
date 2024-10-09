@@ -4,8 +4,9 @@
 
 #include "Symbols.h"
 
-void insertSymbol(std::map<std::string, int> *table,std::string symbol, int type){
-  table->insert(std::make_pair(symbol, type));
+void insertSymbol(std::map<std::string, int> *table,char* symbol, int type){
+    std::string input = std::string(symbol);
+    table->insert(std::make_pair(input, type));
 }
 
 void printSymbols(std::map<std::string, int> table){

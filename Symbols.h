@@ -9,7 +9,7 @@
 #include <map>
 #include <string>
 
-void insertSymbol(std::map<std::string, int> *table, std::string symbol, int type);
+void insertSymbol(std::map<std::string, int> *table, char* symbol, int type);
 void printSymbols(std::map<std::string, int> table);
 
 
