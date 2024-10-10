@@ -58,7 +58,7 @@ int isRunning(void){
 }
 
 void initMe(void){
-    printf("\ninit");
+    symbol_table.clear();
 }
 
 int yywrap(){

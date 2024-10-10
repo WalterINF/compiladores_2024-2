@@ -15,15 +15,10 @@ extern FILE *yyin;
 extern std::map<std::string,int> symbol_table;
 extern void insertSymbol(std::map<std::string, int> *table, char* symbol, int type);
 extern void printSymbols(std::map<std::string, int> table);
-
-
 int getLineNumber();
 int isRunning(void);
 
 int main(int argc, char** argv){
-
-	int kw;
-
 	if (argc < 2){
 		std::cout << "Número incorreto de argumentos" << std::endl;
 		return 1;
@@ -35,6 +30,7 @@ int main(int argc, char** argv){
       	return 1;
     }
 
+    int kw;
 	while(isRunning()){
 
 		kw = yylex();
@@ -59,6 +55,7 @@ int main(int argc, char** argv){
 			default: fprintf(stderr, "CARACTERE ESPECIAL (%s) on line: %d \n", yytext, getLineNumber()); break;
 		}
 	}
+   	printf("----------Tabela de simbolos ---------\n");
     printSymbols(symbol_table);
 	return 0;
 }
