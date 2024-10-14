@@ -1,21 +1,20 @@
 /*
 Etapa1 - Trabalho Final - compiladores - 2024/2
 Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
- */
-
-//
-// Created by walter on 08/10/24.
-//
+*/
 
 #include "Symbols.h"
 
-void insertSymbol(std::map<std::string, int> *table,char* symbol, int type){
-    std::string input = std::string(symbol);
-    table->insert(std::make_pair(input, type));
+/* Inserts a Symbol object into the table, using its 'name' value as the key. */
+void insertSymbol(std::map<std::string, Symbol> *table, Symbol symbol)
+{
+    table->insert(std::pair<std::string, Symbol>(symbol.name, symbol));
 }
 
-void printSymbols(std::map<std::string, int> table){
+/* Prints all table's 'key : value' pairs to stdout. */
+void printSymbols(std::map<std::string, Symbol> table)
+{
     for (const auto& pair : table) {
-        std::cout << pair.first << " : " << pair.second << std::endl;
+        fprintf(stdout, "%s : %d\n", pair.first.c_str(), pair.second.type);
     }
 }

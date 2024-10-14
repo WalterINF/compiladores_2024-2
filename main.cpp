@@ -8,13 +8,14 @@ Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
 #include "tokens.h"
 #include <map>
 #include <string>
+#include "Symbols.h"
 
 int yylex();
 extern char *yytext;
 extern FILE *yyin;
-extern std::map<std::string,int> symbol_table;
-extern void insertSymbol(std::map<std::string, int> *table, char* symbol, int type);
-extern void printSymbols(std::map<std::string, int> table);
+extern std::map<std::string, Symbol> symbol_table;
+extern void insertSymbol(std::map<std::string, Symbol> *table, Symbol symbol);
+extern void printSymbols(std::map<std::string, Symbol> table);
 int getLineNumber();
 int isRunning(void);
 
@@ -59,16 +60,3 @@ int main(int argc, char** argv){
     printSymbols(symbol_table);
 	return 0;
 }
-
-/*
-int main(void){
-
-  std::map<std::string, int> table;
-  insertSymbol(&table,"hello4",1);
-  insertSymbol(&table,"hello5",2);
-  insertSymbol(&table,"hello6",3);
-  printSymbols(table);
-  printf("\n--fim da tabela--\n");
-  return 0;
-}
-*/

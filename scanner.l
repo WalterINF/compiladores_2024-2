@@ -11,7 +11,7 @@ Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
 int is_running = 1;
 int line_count = 1;
 
-std::map<std::string,int> symbol_table;
+std::map<std::string, Symbol> symbol_table;
 %}
 
 %x MULTILINE_COMMENT
@@ -30,9 +30,9 @@ read                       {return KW_READ;}
 print                      {return KW_PRINT;}
 return                     {return KW_RETURN;}
 
-[#][0-9]+                  {insertSymbol(&symbol_table, &yytext[0], LIT_INT); return LIT_INT;}
-\"([^\"\\]|\\.)*\"         {insertSymbol(&symbol_table, &yytext[0], LIT_STRING); return LIT_STRING;}
-'(.|\\.)'                  {insertSymbol(&symbol_table, &yytext[0], LIT_CHAR); return LIT_CHAR;}
+[#][0-9]+                  {insertSymbol(&symbol_table, Symbol(&yytext[0], LIT_INT)); return LIT_INT;}
+\"([^\"\\]|\\.)*\"         {insertSymbol(&symbol_table, Symbol(&yytext[0], LIT_STRING)); return LIT_STRING;}
+'(.|\\.)'                  {insertSymbol(&symbol_table, Symbol(&yytext[0], LIT_CHAR)); return LIT_CHAR;}
 
 [,;:()[\]{}=+\-*/%<>&|~]   {return (int)yytext[0];}
 \/\/(.*?)\n                {line_count++;}
@@ -42,7 +42,7 @@ return                     {return KW_RETURN;}
 <MULTILINE_COMMENT>"**/"   {BEGIN(INITIAL);}
 <MULTILINE_COMMENT>.       { }
 
-[a-zA-Z0-9]+               {insertSymbol(&symbol_table, &yytext[0], TK_IDENTIFIER); return TK_IDENTIFIER;}
+[a-zA-Z0-9]+               {insertSymbol(&symbol_table, Symbol(&yytext[0], TK_IDENTIFIER)); return TK_IDENTIFIER;}
 
 .                          {return TOKEN_ERROR;}
 
