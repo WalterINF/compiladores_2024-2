@@ -34,11 +34,11 @@ return                     {return KW_RETURN;}
 \"([^\"\\]|\\.)*\"         {insertSymbol(&symbol_table, &yytext[0], LIT_STRING); return LIT_STRING;}
 '(.|\\.)'                  {insertSymbol(&symbol_table, &yytext[0], LIT_CHAR); return LIT_CHAR;}
 
-[;,():\[\]{}=+\-*/%<>&\\~] {return (int)yytext[0];}
-\/\/(.*?)\n               {line_count++;}
+[,;:()[\]{}=+\-*/%<>&|~]   {return (int)yytext[0];}
+\/\/(.*?)\n                {line_count++;}
 "/**"                      {BEGIN(MULTILINE_COMMENT);}
 
-<MULTILINE_COMMENT>\n     {line_count++;}
+<MULTILINE_COMMENT>\n      {line_count++;}
 <MULTILINE_COMMENT>"**/"   {BEGIN(INITIAL);}
 <MULTILINE_COMMENT>.       { }
 
