@@ -22,7 +22,19 @@ class Symbol {
         }
 };
 
-void insertSymbol(std::map<std::string, Symbol> *table, Symbol symbol);
-void printSymbols(std::map<std::string, Symbol> table);
+class SymbolTable {
+    public:
+        SymbolTable() {}
+
+        void insert(Symbol symbol);
+        void print();
+        void clear();
+
+        Symbol get(std::string name);
+
+        friend std::ostream& operator<<(std::ostream& os, const SymbolTable& table);
+    private:
+        std::map<std::string, Symbol> table;
+};
 
 #endif //SYMBOLS_H

@@ -13,9 +13,7 @@ Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
 int yylex();
 extern char *yytext;
 extern FILE *yyin;
-extern std::map<std::string, Symbol> symbol_table;
-extern void insertSymbol(std::map<std::string, Symbol> *table, Symbol symbol);
-extern void printSymbols(std::map<std::string, Symbol> table);
+extern SymbolTable symbol_table;
 int getLineNumber();
 int isRunning(void);
 
@@ -57,6 +55,6 @@ int main(int argc, char** argv){
 		}
 	}
    	printf("----------Tabela de simbolos ---------\n");
-    printSymbols(symbol_table);
+    std::cout << symbol_table;
 	return 0;
 }

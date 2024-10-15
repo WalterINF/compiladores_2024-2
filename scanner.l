@@ -11,40 +11,40 @@ Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
 int is_running = 1;
 int line_count = 1;
 
-std::map<std::string, Symbol> symbol_table;
+SymbolTable symbol_table;
 %}
 
 %x MULTILINE_COMMENT
 
 %%
 
-\n                         {line_count++;}
+\n                         { line_count++; }
 [ \t]                      { }
-char                       {return KW_CHAR;}
-int                        {return KW_INT;}
-if                         {return KW_IF;}
-then                       {return KW_THEN;}
-else                       {return KW_ELSE;}
-while                      {return KW_WHILE;}
-read                       {return KW_READ;}
-print                      {return KW_PRINT;}
-return                     {return KW_RETURN;}
+char                       { return KW_CHAR; }
+int                        { return KW_INT; }
+if                         { return KW_IF; }
+then                       { return KW_THEN; }
+else                       { return KW_ELSE; }
+while                      { return KW_WHILE; }
+read                       { return KW_READ; }
+print                      { return KW_PRINT; }
+return                     { return KW_RETURN; }
 
-[#][0-9]+                  {insertSymbol(&symbol_table, Symbol(&yytext[0], LIT_INT)); return LIT_INT;}
-\"([^\"\\]|\\.)*\"         {insertSymbol(&symbol_table, Symbol(&yytext[0], LIT_STRING)); return LIT_STRING;}
-'(.|\\.)'                  {insertSymbol(&symbol_table, Symbol(&yytext[0], LIT_CHAR)); return LIT_CHAR;}
+[#][0-9]+                  { symbol_table.insert(Symbol(&yytext[0], LIT_INT)); return LIT_INT; }
+\"([^\"\\]|\\.)*\"         { symbol_table.insert(Symbol(&yytext[0], LIT_STRING)); return LIT_STRING; }
+'(.|\\.)'                  { symbol_table.insert(Symbol(&yytext[0], LIT_CHAR)); return LIT_CHAR; }
 
-[,;:()[\]{}=+\-*/%<>&|~]   {return (int)yytext[0];}
-\/\/(.*?)\n                {line_count++;}
-"/**"                      {BEGIN(MULTILINE_COMMENT);}
+[,;:()[\]{}=+\-*/%<>&|~]   { return (int)yytext[0]; }
+\/\/(.*?)\n                { line_count++; }
+"/**"                      { BEGIN(MULTILINE_COMMENT); }
 
-<MULTILINE_COMMENT>\n      {line_count++;}
-<MULTILINE_COMMENT>"**/"   {BEGIN(INITIAL);}
+<MULTILINE_COMMENT>\n      { line_count++; }
+<MULTILINE_COMMENT>"**/"   { BEGIN(INITIAL); }
 <MULTILINE_COMMENT>.       { }
 
-[a-zA-Z0-9]+               {insertSymbol(&symbol_table, Symbol(&yytext[0], TK_IDENTIFIER)); return TK_IDENTIFIER;}
+[a-zA-Z0-9]+               { symbol_table.insert(Symbol(&yytext[0], TK_IDENTIFIER)); return TK_IDENTIFIER; }
 
-.                          {return TOKEN_ERROR;}
+.                          { return TOKEN_ERROR; }
 
 
 %%

@@ -5,16 +5,36 @@ Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
 
 #include "Symbols.h"
 
-/* Inserts a Symbol object into the table, using its 'name' value as the key. */
-void insertSymbol(std::map<std::string, Symbol> *table, Symbol symbol)
-{
-    table->insert(std::pair<std::string, Symbol>(symbol.name, symbol));
+/* Inserts a Symbol object into the table */
+void SymbolTable::insert(Symbol symbol) {
+    table.insert(std::pair<std::string, Symbol>(symbol.name, symbol));
 }
 
-/* Prints all table's 'key : value' pairs to stdout. */
-void printSymbols(std::map<std::string, Symbol> table)
-{
+/* Prints the table */
+void SymbolTable::print() {
     for (const auto& pair : table) {
         fprintf(stdout, "%s : %d\n", pair.first.c_str(), pair.second.type);
     }
+}
+
+/* Returns a Symbol object from the table */
+Symbol SymbolTable::get(std::string name) {
+    auto it = table.find(name);
+    if (it != table.end()) {
+        return it->second;
+    }
+    throw std::runtime_error("Symbol not found");
+}
+
+/* Clears the table */
+void SymbolTable::clear() {
+    table.clear();
+}
+
+/* Overloads the << operator to print the table */
+std::ostream& operator<<(std::ostream& os, const SymbolTable& table) {
+    for (const auto& pair : table.table) {
+        os << pair.first << " : " << pair.second.type << std::endl;
+    }
+    return os;
 }
