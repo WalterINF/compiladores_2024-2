@@ -1,0 +1,13 @@
+//teste de entrada 2
+
+/** isso é um comentário multilinha
+
+
+
+**/
+
+int x[#0];
+
+char radix == #0;
+
+return #0;
