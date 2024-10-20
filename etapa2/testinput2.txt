@@ -6,8 +6,12 @@
 
 **/
 
-int x[#0];
+//int radix == 'b';
 
-char radix == #0;
+int main()
+{
 
-return #0;
+    radix = 'a';
+
+    return #0;
+}

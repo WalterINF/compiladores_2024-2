@@ -59,6 +59,7 @@ declaration : type TK_IDENTIFIER "==" LIT_INT ";"
             | type TK_IDENTIFIER "==" LIT_CHAR ";"
             | type TK_IDENTIFIER "[" LIT_INT "]" ";"
             | type TK_IDENTIFIER "[" LIT_INT "]" "==" vector ";"
+            | function
             ;
 
 
@@ -82,18 +83,29 @@ lparams : type TK_IDENTIFIER "," lparams
 function : type TK_IDENTIFIER "(" params ")" block
 
 //bloco
-block : "{" ldeclarations "}"
+block : "{" lcmds "}"
       ;
 
-cmd : TK_IDENTIFIER "=" expr
-    | TK_IDENTIFIER "[" expr "]" "=" expr
-    | KW_READ TK_IDENTIFIER
-    | KW_PRINT
-    | KW_RETURN expr
-    |
+//lista de comandos
+lcmds : cmd lcmds
+      |
+      ;
+
+//comandos sem ponto e virgula
+cmd_body : TK_IDENTIFIER "=" expr
+     | TK_IDENTIFIER "[" expr "]" "=" expr
+     | KW_READ TK_IDENTIFIER
+     | KW_PRINT
+     | KW_RETURN expr
+     |
+     ;
+
+//comandos
+cmd : cmd_body ";"
+    | block
     ;
 
-
+//expressoes
 expr : literal
      |
      ;
