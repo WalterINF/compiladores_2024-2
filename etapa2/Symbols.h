@@ -10,6 +10,11 @@ Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
 #include <map>
 #include <string>
 
+#define SYMBOL_LIT_INT 1
+#define SYMBOL_LIT_STRING 2
+#define SYMBOL_LIT_CHAR 3
+#define SYMBOL_IDENTIFIER 4
+
 class Symbol {
     public:
         std::string name;
