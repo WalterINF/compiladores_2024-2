@@ -148,11 +148,9 @@ op : "+"
    ;
 
 
-
 %%
 
 int yyerror(char *err){
-
-	fprintf(stderr, "ERROR in line = %d\n", getLineNumber());
+	fprintf(stderr, "error in line = %d\n", getLineNumber());
 	return 3;
 }

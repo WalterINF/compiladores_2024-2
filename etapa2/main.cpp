@@ -29,8 +29,13 @@ int main(int argc, char** argv){
       	return 1;
     }
 
-    printf("\n%d",yyparse());
-
-   	printf("----------Tabela de simbolos ---------\n");
+    if(yyparse()){
+      exit(3);
+    } else {
+    	std::cout << "Parsed Successfully!" << std::endl;
+        printf("----------Tabela de simbolos ---------\n");
+        std::cout << symbol_table;
+    	exit(0);
+    }
 	return 0;
 }
