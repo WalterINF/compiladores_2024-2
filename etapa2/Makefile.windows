@@ -1,17 +1,23 @@
 CXX = g++
 CXXFLAGS = -Wall -std=gnu++0x
+TARGET_NAME = etapa2
 
-target: etapa1
+target: $(TARGET_NAME)
 
-etapa1: lex.yy.o main.o Symbols.o
-	$(CXX) -o etapa1 lex.yy.o main.o Symbols.o
+$(TARGET_NAME): y.tab.o lex.yy.o main.o Symbols.o
+	$(CXX) -o $(TARGET_NAME) y.tab.o lex.yy.o Symbols.o main.o
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $< -c
+
+y.tab.cpp: parser.y
+	bison -d parser.y
+	ren parser.tab.* y.tab.*
+	ren y.tab.c y.tab.cpp
 
 lex.yy.cpp: scanner.l
 	flex scanner.l
 	ren lex.yy.c lex.yy.cpp
 
 clean:
-	del etapa1.exe lex.yy.cpp *.o
+	del $(TARGET_NAME).exe lex.yy.cpp *.o y.tab.*

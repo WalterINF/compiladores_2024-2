@@ -64,8 +64,6 @@ declaration : type TK_IDENTIFIER "=" LIT_INT ";"
             | function
             ;
 
-vector : TK_ID
-
 //vetores
 lit_vector : literal lit_vector
       |
