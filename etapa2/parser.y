@@ -35,6 +35,13 @@ Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
 %%
 
 //tipos
+
+
+//programa: lista de declarações
+program : ldeclarations
+    |
+    ;
+
 type : KW_CHAR
      | KW_INT
      ;
@@ -44,39 +51,35 @@ literal : LIT_INT
         | LIT_CHAR
         ;
 
-//programa: lista de declarações
-program : ldeclarations
-    |
-    ;
-
 //lista de declarações
 ldeclarations : declaration ldeclarations
     |
     ;
 
 //declaração
-declaration : type TK_IDENTIFIER "==" LIT_INT ";"
-            | type TK_IDENTIFIER "==" LIT_CHAR ";"
+declaration : type TK_IDENTIFIER "=" LIT_INT ";"
+            | type TK_IDENTIFIER "=" LIT_CHAR ";"
             | type TK_IDENTIFIER "[" LIT_INT "]" ";"
-            | type TK_IDENTIFIER "[" LIT_INT "]" "==" vector ";"
+            | type TK_IDENTIFIER "[" LIT_INT "]" "=" lit_vector ";"
             | function
             ;
 
-
+vector : TK_ID
 
 //vetores
-vector : literal vector
+lit_vector : literal lit_vector
       |
       ;
 
 //parametros podem ser uma lista ou vazio
 params : lparams
+       | type TK_IDENTIFIER
        |
        ;
 
 //lista de parametros
 lparams : type TK_IDENTIFIER "," lparams
-        |
+        | type TK_IDENTIFIER
         ;
 
 //funções
@@ -91,24 +94,62 @@ lcmds : cmd lcmds
       |
       ;
 
-//comandos sem ponto e virgula
-cmd_body : TK_IDENTIFIER "=" expr
-     | TK_IDENTIFIER "[" expr "]" "=" expr
-     | KW_READ TK_IDENTIFIER
-     | KW_PRINT
-     | KW_RETURN expr
-     |
+//comandos
+cmd : TK_IDENTIFIER "=" expr ";"
+     | TK_IDENTIFIER "[" expr "]" "=" expr ";"
+     | KW_READ TK_IDENTIFIER ";"
+     | KW_PRINT lexpr_str ";"
+     | KW_RETURN expr ";"
+     | block
+     | KW_WHILE "(" expr ")" cmd
+     | KW_IF "(" expr ")" KW_THEN cmd
+     | KW_IF "(" expr ")" KW_THEN cmd KW_ELSE cmd
+     | ";"
      ;
 
-//comandos
-cmd : cmd_body ";"
-    | block
-    ;
 
 //expressoes
 expr : literal
-     |
+     | TK_IDENTIFIER
+     | expr op expr
+     | TK_IDENTIFIER "[" expr "]"
+     | TK_IDENTIFIER "(" lcallparams ")"
      ;
+
+//lista de expressões
+lexpr : expr lexpr
+      |
+      ;
+
+//lista de expressões ou strings
+lexpr_str : expr lexpr_str
+          | LIT_STRING lexpr_str
+          |
+          ;
+
+//lista de parametros de chamada de função
+callparams : lcallparams
+           | expr
+           |
+           ;
+
+lcallparams : expr "," lcallparams
+        | expr
+        ;
+
+op : "+"
+   | "-"
+   | "*"
+   | "/"
+   | "<"
+   | ">"
+   | "="
+   | "&"
+   | "|"
+   | "~"
+   ;
+
+
 
 %%
 
