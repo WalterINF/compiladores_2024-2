@@ -30,6 +30,12 @@ Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
 
 %token TOKEN_ERROR
 
+%left '|' '~'
+%left '=' '&'
+%left '<' '>'
+%left '+' '-'
+%left '*' '/'
+
 %start program
 
 %%
@@ -57,10 +63,10 @@ ldeclarations : declaration ldeclarations
     ;
 
 //declaração
-declaration : type TK_IDENTIFIER "=" LIT_INT ";"
-            | type TK_IDENTIFIER "=" LIT_CHAR ";"
-            | type TK_IDENTIFIER "[" LIT_INT "]" ";"
-            | type TK_IDENTIFIER "[" LIT_INT "]" "=" lit_vector ";"
+declaration : type TK_IDENTIFIER '=' LIT_INT ';'
+            | type TK_IDENTIFIER '=' LIT_CHAR ';'
+            | type TK_IDENTIFIER '[' LIT_INT ']' ';'
+            | type TK_IDENTIFIER '[' LIT_INT ']' '=' lit_vector ';'
             | function
             ;
 
@@ -73,21 +79,20 @@ lit_vector :
 param : type TK_IDENTIFIER
       ;
 
-params :
-       | param
-       | lparams
-       ;
-
 //lista de parametros
-lparams : param
-        | param "," lparams
-        ;
+lparams : param tail
+	|
+	;
+	
+tail : ',' lparams
+     | 
+     ;
 
 //funções
-function : type TK_IDENTIFIER "(" params ")" block
+function : type TK_IDENTIFIER '(' lparams ')' block
 
 //bloco
-block : "{" lcmds "}"
+block : '{' lcmds '}'
       ;
 
 //lista de comandos
@@ -96,30 +101,25 @@ lcmds : cmd lcmds
       ;
 
 //comandos
-cmd : TK_IDENTIFIER "=" expr ";"
-     | TK_IDENTIFIER "[" expr "]" "=" expr ";"
-     | KW_READ TK_IDENTIFIER ";"
-     | KW_PRINT lexpr_str ";"
-     | KW_RETURN expr ";"
+cmd : TK_IDENTIFIER '=' expr ';'
+     | TK_IDENTIFIER '[' expr ']' '=' expr ';'
+     | KW_READ TK_IDENTIFIER ';'
+     | KW_PRINT lexpr_str ';'
+     | KW_RETURN expr ';'
      | block
-     | KW_WHILE "(" expr ")" cmd
-     | KW_IF "(" expr ")" KW_THEN cmd
-     | KW_IF "(" expr ")" KW_THEN cmd KW_ELSE cmd
-     | ";"
+     | KW_WHILE '(' expr ')' cmd
+     | KW_IF '(' expr ')' KW_THEN cmd
+     | KW_IF '(' expr ')' KW_THEN cmd KW_ELSE cmd
+     | ';'
      ;
 
 //expressoes
 expr : literal
      | TK_IDENTIFIER
      | expr op expr
-     | TK_IDENTIFIER "[" expr "]"
-     | TK_IDENTIFIER "(" lcallparams ")"
+     | TK_IDENTIFIER '[' expr ']'
+     | TK_IDENTIFIER '(' lcallparams ')'
      ;
-
-//lista de expressões
-lexpr : expr lexpr
-      |
-      ;
 
 //lista de expressões ou strings
 lexpr_str : expr lexpr_str
@@ -128,25 +128,20 @@ lexpr_str : expr lexpr_str
           ;
 
 //lista de parametros de chamada de função
-callparams : lcallparams
-           | expr
-           |
-           ;
-
-lcallparams : expr "," lcallparams
+lcallparams : lcallparams ',' expr
             | expr
             ;
 
-op : "+"
-   | "-"
-   | "*"
-   | "/"
-   | "<"
-   | ">"
-   | "="
-   | "&"
-   | "|"
-   | "~"
+op : '+'
+   | '-'
+   | '*'
+   | '/'
+   | '<'
+   | '>'
+   | '='
+   | '&'
+   | '|'
+   | '~'
    ;
 
 
