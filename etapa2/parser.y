@@ -65,19 +65,22 @@ declaration : type TK_IDENTIFIER "=" LIT_INT ";"
             ;
 
 //vetores
-lit_vector : literal lit_vector
-      |
-      ;
+lit_vector :
+           | literal lit_vector
+           ;
 
 //parametros podem ser uma lista ou vazio
-params : lparams
-       | type TK_IDENTIFIER
-       |
+param : type TK_IDENTIFIER
+      ;
+
+params :
+       | param
+       | lparams
        ;
 
 //lista de parametros
-lparams : type TK_IDENTIFIER "," lparams
-        | type TK_IDENTIFIER
+lparams : param
+        | param "," lparams
         ;
 
 //funções
@@ -105,7 +108,6 @@ cmd : TK_IDENTIFIER "=" expr ";"
      | ";"
      ;
 
-
 //expressoes
 expr : literal
      | TK_IDENTIFIER
@@ -132,8 +134,8 @@ callparams : lcallparams
            ;
 
 lcallparams : expr "," lcallparams
-        | expr
-        ;
+            | expr
+            ;
 
 op : "+"
    | "-"
