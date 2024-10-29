@@ -81,11 +81,12 @@ param : type TK_IDENTIFIER
 
 //lista de parametros
 lparams : param tail
-	|
-	;
+	    | param
+	    |
+	    ;
 	
-tail : ',' lparams
-     | 
+tail : ',' tail
+     | param
      ;
 
 //funções
@@ -104,7 +105,8 @@ lcmds : cmd lcmds
 cmd : TK_IDENTIFIER '=' expr ';'
      | TK_IDENTIFIER '[' expr ']' '=' expr ';'
      | KW_READ TK_IDENTIFIER ';'
-     | KW_PRINT lexpr_str ';'
+     | KW_PRINT expr lexpr_str ';'
+     | KW_PRINT LIT_STRING lexpr_str ';'
      | KW_RETURN expr ';'
      | block
      | KW_WHILE '(' expr ')' cmd
@@ -114,7 +116,8 @@ cmd : TK_IDENTIFIER '=' expr ';'
      ;
 
 //expressoes
-expr : literal
+expr : '(' expr ')'
+     | literal
      | TK_IDENTIFIER
      | expr op expr
      | TK_IDENTIFIER '[' expr ']'
