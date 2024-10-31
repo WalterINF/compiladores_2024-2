@@ -86,8 +86,8 @@ lparams : param tail
 	    |
 	    ;
 	
-tail : ',' tail
-     | param
+tail : ',' param tail
+     |
      ;
 
 //funções
