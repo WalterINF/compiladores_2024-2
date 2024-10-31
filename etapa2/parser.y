@@ -132,9 +132,14 @@ lexpr_str : expr lexpr_str
           ;
 
 //lista de parametros de chamada de função
-lcallparams : lcallparams ',' expr
-            | expr
-            ;
+lcallparams : expr calltail
+	    | expr
+	    |
+	    ;
+	
+calltail : ',' expr calltail
+     |
+     ;
 
 op : '+'
    | '-'
