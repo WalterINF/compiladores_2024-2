@@ -3,12 +3,13 @@
 Etapa2 - Trabalho Final - compiladores - 2024/2
 Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
  */
+ 
 #include <stdio.h>
 #include <string.h>
 
-    int yylex();
-	int yyerror(char *message);
-	extern int getLineNumber();
+int yylex();
+int yyerror(char *message);
+extern int getLineNumber();
 %}
 
 %token KW_CHAR
@@ -150,7 +151,8 @@ op : '+'
 
 %%
 
-int yyerror(char *err){
-	fprintf(stderr, "error in line = %d\n", getLineNumber());
-	return 3;
+int yyerror(char *err)
+{
+     fprintf(stderr, "Error: %s at line %d\n", err, getLineNumber());
+     return 3;
 }
