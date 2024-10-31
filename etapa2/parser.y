@@ -120,7 +120,16 @@ cmd : TK_IDENTIFIER '=' expr ';'
 expr : '(' expr ')'
      | literal
      | TK_IDENTIFIER
-     | expr op expr
+     | expr '+' expr
+     | expr '-' expr
+     | expr '*' expr
+     | expr '/' expr
+     | expr '<' expr
+     | expr '>' expr
+     | expr '=' expr
+     | expr '&' expr
+     | expr '|' expr
+     | expr '~' expr
      | TK_IDENTIFIER '[' expr ']'
      | TK_IDENTIFIER '(' lcallparams ')'
      ;
@@ -140,19 +149,6 @@ lcallparams : expr calltail
 calltail : ',' expr calltail
      |
      ;
-
-op : '+'
-   | '-'
-   | '*'
-   | '/'
-   | '<'
-   | '>'
-   | '='
-   | '&'
-   | '|'
-   | '~'
-   ;
-
 
 %%
 
