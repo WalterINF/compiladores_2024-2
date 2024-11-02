@@ -1,7 +1,7 @@
 CXX = g++
 CXXFLAGS = -Wall -std=c++11
 
-etapa3: y.tab.o lex.yy.o Symbols.o main.o
+etapa3: y.tab.o lex.yy.o Symbols.o main.o Ast.o
 	$(CXX) -o etapa3 y.tab.o lex.yy.o Symbols.o main.o
 
 %.o: %.cpp

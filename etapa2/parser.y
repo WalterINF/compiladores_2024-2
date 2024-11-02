@@ -3,13 +3,12 @@
 Etapa2 - Trabalho Final - compiladores - 2024/2
 Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
  */
- 
 #include <stdio.h>
 #include <string.h>
 
-int yylex();
-int yyerror(char *message);
-extern int getLineNumber();
+    int yylex();
+	int yyerror(char *message);
+	extern int getLineNumber();
 %}
 
 %token KW_CHAR
@@ -86,8 +85,8 @@ lparams : param tail
 	    |
 	    ;
 	
-tail : ',' param tail
-     |
+tail : ',' tail
+     | param
      ;
 
 //funções
@@ -120,16 +119,7 @@ cmd : TK_IDENTIFIER '=' expr ';'
 expr : '(' expr ')'
      | literal
      | TK_IDENTIFIER
-     | expr '+' expr
-     | expr '-' expr
-     | expr '*' expr
-     | expr '/' expr
-     | expr '<' expr
-     | expr '>' expr
-     | expr '=' expr
-     | expr '&' expr
-     | expr '|' expr
-     | expr '~' expr
+     | expr op expr
      | TK_IDENTIFIER '[' expr ']'
      | TK_IDENTIFIER '(' lcallparams ')'
      ;
@@ -141,19 +131,26 @@ lexpr_str : expr lexpr_str
           ;
 
 //lista de parametros de chamada de função
-lcallparams : expr calltail
-	    | expr
-	    |
-	    ;
-	
-calltail : ',' expr calltail
-     |
-     ;
+lcallparams : lcallparams ',' expr
+            | expr
+            ;
+
+op : '+'
+   | '-'
+   | '*'
+   | '/'
+   | '<'
+   | '>'
+   | '='
+   | '&'
+   | '|'
+   | '~'
+   ;
+
 
 %%
 
-int yyerror(char *err)
-{
-     fprintf(stderr, "Error: %s at line %d\n", err, getLineNumber());
-     return 3;
+int yyerror(char *err){
+	fprintf(stderr, "error in line = %d\n", getLineNumber());
+	return 3;
 }

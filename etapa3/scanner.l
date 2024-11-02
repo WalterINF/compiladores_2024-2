@@ -6,6 +6,7 @@ Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
 #include <stdio.h>
 #include <string.h>
 #include "Symbols.h"
+#include "Ast.h"
 #include "y.tab.h"
 
 int is_running = 1;
