@@ -5,6 +5,8 @@
 #ifndef AST_H
 #define AST_H
 
+#include <cstring>
+
 #include "Symbols.h"
 #include <string>
 #include <queue>
@@ -125,8 +127,13 @@ public:
         case NODE_LCPTAIL: return "LCPTAIL";
         case NODE_INT: return "INT";
         case NODE_CHAR: return "CHAR";
+        case NODE_BLOCK: return "BLOCK";
+        case NODE_VECATTR: return "VECATTR";
+        case NODE_PARAM: return "PARAM";
+        case NODE_LPTAIL: return "LPTAIL";
+        case NODE_LPARAMS: return "LPARAMS";
       }
-    return "ERR";
+    return std::to_string(type);
   }
 
 private:
@@ -135,21 +142,17 @@ private:
       return;
     }
 
-    // Print indentation
     for (int i = 0; i < depth; i++) {
-      printf("  ");  // Two spaces for each level of depth
+      printf("--");
     }
 
-    // Print current node
     printf("%s", node->toString().c_str());
 
-    // Print symbol value if it exists
     if (node->symbol != nullptr) {
       printf(" (%s)", node->toString().c_str());
     }
     printf("\n");
 
-    // Print all children recursively
     for (int i = 0; i < 4; i++) {
       if (node->children[i] != nullptr) {
         printTree(node->children[i], depth + 1);
