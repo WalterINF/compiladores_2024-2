@@ -70,14 +70,15 @@ Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
 %%
 
 
+
 //programa: lista de declarações
 program : ldeclarations {root=$$;}
     | {$$=NULL;}
     ;
 
 //valor literal
-literal : LIT_INT   {$$=Node::createNode(NODE_LITERAL,NULL,NULL,NULL,NULL,NULL);}
-        | LIT_CHAR  {$$=Node::createNode(NODE_LITERAL,NULL,NULL,NULL,NULL,NULL);}
+literal : LIT_INT   {$$=Node::createNode(NODE_SYMBOL,$1,NULL,NULL,NULL,NULL);}
+        | LIT_CHAR  {$$=Node::createNode(NODE_SYMBOL,$1,NULL,NULL,NULL,NULL);}
         ;
 
 //lista de declarações
@@ -86,10 +87,9 @@ ldeclarations : declaration ldeclarations {$$=Node::createNode(NODE_LDEC,NULL,$1
     ;
 
 //declaração
-declaration : type TK_IDENTIFIER '=' LIT_INT ';' {$$=Node::createNode(NODE_DECVAR,$2,$1,Node::createNode(NODE_INT,$4,NULL,NULL,NULL,NULL),NULL,NULL);}
-            | type TK_IDENTIFIER '=' LIT_CHAR ';' {$$=Node::createNode(NODE_DECVAR,$2,$1,Node::createNode(NODE_CHAR,$4,NULL,NULL,NULL,NULL),NULL,NULL);}
-            | type TK_IDENTIFIER '[' LIT_INT ']' ';' {$$=Node::createNode(NODE_DECVEC,$2,$1,Node::createNode(NODE_INT,$4,NULL,NULL,NULL,NULL),NULL,NULL);}
-            | type TK_IDENTIFIER '[' LIT_INT ']' '=' lit_vector ';' {$$=Node::createNode(NODE_DECVEC,$2,$1,Node::createNode(NODE_INT,$4,NULL,NULL,NULL,NULL),NULL,NULL);}
+declaration : type TK_IDENTIFIER '=' literal ';' {$$=Node::createNode(NODE_DECVAR,$2,$1,$4,NULL,NULL);}
+            | type TK_IDENTIFIER '[' LIT_INT ']' ';' {$$=Node::createNode(NODE_DECVEC,$2,$1,Node::createNode(NODE_SYMBOL,$4,NULL,NULL,NULL,NULL),NULL,NULL);}
+            | type TK_IDENTIFIER '[' LIT_INT ']' '=' lit_vector ';' {$$=Node::createNode(NODE_DECVEC,$2,$1,Node::createNode(NODE_SYMBOL,$4,NULL,NULL,NULL,NULL),$7,NULL);}
             | type TK_IDENTIFIER '(' lparams ')' block {$$=Node::createNode(NODE_DECFUNC,$2,$1,$4,$6,NULL);}
             ;
 //vetores
@@ -126,7 +126,7 @@ cmd : TK_IDENTIFIER '=' expr ';' {$$=Node::createNode(NODE_ATTR,$1,$3,NULL,NULL,
      | KW_READ TK_IDENTIFIER ';' {$$=Node::createNode(NODE_READ,$2,NULL,NULL,NULL,NULL);}
      | KW_PRINT lexpr_str ';' {$$=Node::createNode(NODE_PRINT,NULL,$2,NULL,NULL,NULL);}
      | KW_RETURN expr ';' {$$=Node::createNode(NODE_RETURN,NULL,$2,NULL,NULL,NULL);}
-     | block {$$=NULL;}
+     | block {$$=$1;}
      | KW_WHILE '(' expr ')' cmd {$$=Node::createNode(NODE_WHILE,NULL,$3,NULL,NULL,NULL);}
      | KW_IF '(' expr ')' KW_THEN cmd {$$=Node::createNode(NODE_IF,NULL,$3,$6,NULL,NULL);}
      | KW_IF '(' expr ')' KW_THEN cmd KW_ELSE cmd {$$=Node::createNode(NODE_IFELSE,NULL,$3,$6,$8,NULL);}
@@ -134,9 +134,9 @@ cmd : TK_IDENTIFIER '=' expr ';' {$$=Node::createNode(NODE_ATTR,$1,$3,NULL,NULL,
      ;
 
 //expressoes
-expr : '(' expr ')' {$$=NULL;}
-     | literal {$$=NULL;}
-     | TK_IDENTIFIER {$$=NULL;}
+expr : '(' expr ')' {$$=$2;}
+     | literal {$$=$1;}
+     | TK_IDENTIFIER {$$=Node::createNode(NODE_SYMBOL,$1,NULL,NULL,NULL,NULL);}
      | expr "+" expr {$$=Node::createNode(NODE_SUM,NULL,$1,$3,NULL,NULL);}
      | expr "-" expr {$$=Node::createNode(NODE_SUB,NULL,$1,$3,NULL,NULL);}
      | expr "*" expr {$$=Node::createNode(NODE_MUL,NULL,$1,$3,NULL,NULL);}
@@ -156,8 +156,8 @@ lexpr_str : expr_or_str lexpr_str {$$=Node::createNode(NODE_PRINT_VEC,NULL,$1,$2
           | {$$=NULL;}
           ;
 
-expr_or_str : expr {$$=NULL;}
-            | LIT_STRING {$$=NULL;}
+expr_or_str : expr {$$=$1;}
+            | LIT_STRING {$$=Node::createNode(NODE_SYMBOL,$1,NULL,NULL,NULL,NULL);}
             ;
 
 //lista de parametros de chamada de função
@@ -170,7 +170,7 @@ ctail : ',' expr ctail {$$=Node::createNode(NODE_LCPTAIL, NULL, $2, $3, NULL, NU
      | {$$=NULL;}
      ;
 
-type : KW_CHAR {$$=Node::createNode(NODE_INT,NULL,NULL,NULL,NULL,NULL);}
+type : KW_CHAR {$$=Node::createNode(NODE_CHAR,NULL,NULL,NULL,NULL,NULL);}
      | KW_INT {$$=Node::createNode(NODE_INT,NULL,NULL,NULL,NULL,NULL);}
      ;
 

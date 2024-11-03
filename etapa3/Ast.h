@@ -37,6 +37,8 @@
 
 #define NODE_INT 19
 #define NODE_CHAR 20
+#define NODE_LITINT 39
+#define NODE_LITCHAR 40
 #define NODE_STR 21
 #define NODE_LIT_VEC 22
 #define NODE_BLOCK 23
@@ -164,12 +166,14 @@ public:
         fprintf(output, "VAR_NAME"); //nome da variavel
         fprintf(output, " = ");
         decompile(root->children[1], output); //valor de inicialização
+        fprintf(output, ";");
       case NODE_DECVEC:
         decompile(root->children[0], output); //tipo do vetor
         fprintf(output, "VEC_NAME"); //nome do vetor
         fprintf(output, "[");
         decompile(root->children[0], output); //tamanho
         fprintf(output, "]");
+        fprintf(output, ";");
         break;
       case NODE_DECFUNC:
         decompile(root->children[0],output); //tipo de retorno
@@ -251,6 +255,7 @@ public:
         fprintf(output, "VAR_NAME"); //nome da variavel
         fprintf(output, " = ");
         decompile(root->children[0], output); //valor atribuido
+        fprintf(output, ";");
         break;
       case NODE_READ:
         fprintf(output, "read");
@@ -321,6 +326,7 @@ public:
         fprintf(output, "]");
         fprintf(output, " = ");
         decompile(root->children[1], output); //valor atribuido
+        fprintf(output, ";");
         break;
       case NODE_PARAM:
         decompile(root->children[0], output); //tipo do parametro

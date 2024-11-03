@@ -3,6 +3,7 @@
 
 int test(){
     id1[#4] = #5;
+    id2 = variavel2;
 }
 
   
