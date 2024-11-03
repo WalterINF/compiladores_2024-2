@@ -92,7 +92,6 @@ declaration : type TK_IDENTIFIER '=' LIT_INT ';' {$$=Node::createNode(NODE_DECVA
             | type TK_IDENTIFIER '[' LIT_INT ']' '=' lit_vector ';' {$$=Node::createNode(NODE_DECVAR,$2,$1,Node::createNode(NODE_INT,$4,NULL,NULL,NULL,NULL),NULL,NULL);}
             | type TK_IDENTIFIER '(' lparams ')' block {$$=Node::createNode(NODE_DECFUNC,$2,$1,$4,$6,NULL);}
             ;
-
 //vetores
 lit_vector : {$$=NULL;}
            | literal lit_vector {$$=Node::createNode(NODE_LIT_VEC,NULL,$1,$2,NULL,NULL);}
@@ -162,10 +161,6 @@ expr_or_str : expr {$$=NULL;}
             ;
 
 //lista de parametros de chamada de função
-lcallparams : lcallparams ',' expr {$$=NULL;}
-            | expr {$$=NULL;}
-            ;
-
 
 lcallparams : expr ctail {$$=Node::createNode(NODE_LCPARAMS,NULL,$1,$2,NULL,NULL);}
 	    | {$$=NULL;}

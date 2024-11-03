@@ -42,7 +42,10 @@ int main(int argc, char** argv){
 
 	Node* tree = getAst();
 
-	tree->printAll();
+
+	tree->printTree();
+
+	tree->decompileTree("output_test.txt");
 
 	return 0;
 }

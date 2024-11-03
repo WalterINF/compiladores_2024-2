@@ -1,9 +1,9 @@
 // UFRGS - Compiladores - Marcelo Johann - 2024/2 - Draft
 
-char a = #15;
-char c = 'x';
-char 7 = #100;
 
+int test(){
+    id1 = var1 + #1;
+}
 
   
 
