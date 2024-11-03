@@ -76,8 +76,8 @@ program : ldeclarations {root=$$;}
     ;
 
 //valor literal
-literal : LIT_INT   {$$=NULL;}
-        | LIT_CHAR  {$$=NULL;}
+literal : LIT_INT   {$$=Node::createNode(NODE_LITERAL,NULL,NULL,NULL,NULL,NULL);}
+        | LIT_CHAR  {$$=Node::createNode(NODE_LITERAL,NULL,NULL,NULL,NULL,NULL);}
         ;
 
 //lista de declarações
@@ -88,8 +88,8 @@ ldeclarations : declaration ldeclarations {$$=Node::createNode(NODE_LDEC,NULL,$1
 //declaração
 declaration : type TK_IDENTIFIER '=' LIT_INT ';' {$$=Node::createNode(NODE_DECVAR,$2,$1,Node::createNode(NODE_INT,$4,NULL,NULL,NULL,NULL),NULL,NULL);}
             | type TK_IDENTIFIER '=' LIT_CHAR ';' {$$=Node::createNode(NODE_DECVAR,$2,$1,Node::createNode(NODE_CHAR,$4,NULL,NULL,NULL,NULL),NULL,NULL);}
-            | type TK_IDENTIFIER '[' LIT_INT ']' ';' {$$=Node::createNode(NODE_DECVAR,$2,$1,Node::createNode(NODE_INT,$4,NULL,NULL,NULL,NULL),NULL,NULL);}
-            | type TK_IDENTIFIER '[' LIT_INT ']' '=' lit_vector ';' {$$=Node::createNode(NODE_DECVAR,$2,$1,Node::createNode(NODE_INT,$4,NULL,NULL,NULL,NULL),NULL,NULL);}
+            | type TK_IDENTIFIER '[' LIT_INT ']' ';' {$$=Node::createNode(NODE_DECVEC,$2,$1,Node::createNode(NODE_INT,$4,NULL,NULL,NULL,NULL),NULL,NULL);}
+            | type TK_IDENTIFIER '[' LIT_INT ']' '=' lit_vector ';' {$$=Node::createNode(NODE_DECVEC,$2,$1,Node::createNode(NODE_INT,$4,NULL,NULL,NULL,NULL),NULL,NULL);}
             | type TK_IDENTIFIER '(' lparams ')' block {$$=Node::createNode(NODE_DECFUNC,$2,$1,$4,$6,NULL);}
             ;
 //vetores
@@ -170,8 +170,8 @@ ctail : ',' expr ctail {$$=Node::createNode(NODE_LCPTAIL, NULL, $2, $3, NULL, NU
      | {$$=NULL;}
      ;
 
-type : KW_CHAR {$$=NULL;}
-     | KW_INT {$$=NULL;}
+type : KW_CHAR {$$=Node::createNode(NODE_INT,NULL,NULL,NULL,NULL,NULL);}
+     | KW_INT {$$=Node::createNode(NODE_INT,NULL,NULL,NULL,NULL,NULL);}
      ;
 
 %%
