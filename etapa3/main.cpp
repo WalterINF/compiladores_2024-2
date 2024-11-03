@@ -8,6 +8,7 @@ Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
 #include <map>
 #include <string>
 #include "Symbols.h"
+#include "Ast.h"
 
 int yylex();
 extern char *yytext;
@@ -15,6 +16,7 @@ extern FILE *yyin;
 extern int yyparse();
 extern SymbolTable symbol_table;
 int getLineNumber();
+Node *getAst();
 int isRunning(void);
 
 int main(int argc, char** argv){
@@ -35,7 +37,12 @@ int main(int argc, char** argv){
     	std::cout << "Parsed Successfully!" << std::endl;
         printf("----------Tabela de simbolos ---------\n");
         std::cout << symbol_table;
-    	exit(0);
+
     }
+
+	Node* tree = getAst();
+
+	tree->printAll();
+
 	return 0;
 }

@@ -9,7 +9,7 @@ Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
 #include <string.h>
 #include "Ast.h"
 
-
+    Node* getAst();
     int yylex();
 	int yyerror(char *message);
 	extern int getLineNumber();
@@ -54,13 +54,15 @@ Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
 %type <tree> lit_vector
 %type <tree> param
 %type <tree> lparams
-%type <tree> tail
+%type <tree> ptail
 %type <tree> block
 %type <tree> lcmds
 %type <tree> cmd
 %type <tree> expr
 %type <tree> lexpr_str
+%type <tree> expr_or_str
 %type <tree> lcallparams
+%type <tree> ctail
 %type <tree> type
 
 %start program
@@ -72,8 +74,6 @@ Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
 program : ldeclarations {root=$$;}
     | {$$=NULL;}
     ;
-
-
 
 //valor literal
 literal : LIT_INT   {$$=NULL;}
@@ -99,17 +99,16 @@ lit_vector : {$$=NULL;}
            ;
 
 //parametros podem ser uma lista ou vazio
-param : type TK_IDENTIFIER {$$=NULL;} {$$=Node::createNode(NODE_PARAM,$2,$1,NULL,NULL,NULL);}
+param : type TK_IDENTIFIER {$$=Node::createNode(NODE_PARAM,$2,$1,NULL,NULL,NULL);}
       ;
 
 //lista de parametros
-lparams : param tail {$$=NULL;}
-	    | param {$$=NULL;}
+lparams : param ptail {$$=Node::createNode(NODE_LPARAMS,NULL,$1,$2,NULL,NULL);}
 	    | {$$=NULL;}
 	    ;
 	
-tail : ',' tail {$$=NULL;}
-     | param {$$=NULL;}
+ptail : ',' param ptail {$$=Node::createNode(NODE_LPTAIL, NULL, $2, $3, NULL, NULL);}
+     | {$$=NULL;}
      ;
 
 
@@ -118,20 +117,20 @@ block : '{' lcmds '}' {$$=Node::createNode(NODE_BLOCK,NULL,$2,NULL,NULL,NULL);}
       ;
 
 //lista de comandos
-lcmds : cmd lcmds {$$=NULL;}
+lcmds : cmd lcmds {$$=Node::createNode(NODE_LCMDS,NULL,$1,$2,NULL,NULL);}
       | {$$=NULL;}
       ;
 
 //comandos
-cmd : TK_IDENTIFIER '=' expr ';' {$$=NULL;}
-     | TK_IDENTIFIER '[' expr ']' '=' expr ';' {$$=NULL;}
-     | KW_READ TK_IDENTIFIER ';' {$$=NULL;}
-     | KW_PRINT LIT_STRING lexpr_str ';' {$$=NULL;}
-     | KW_RETURN expr ';' {$$=NULL;}
+cmd : TK_IDENTIFIER '=' expr ';' {$$=Node::createNode(NODE_ATTR,$1,$3,NULL,NULL,NULL);}
+     | TK_IDENTIFIER '[' expr ']' '=' expr ';' {$$=Node::createNode(NODE_VECATTR,$1,$3,$6,NULL,NULL);}
+     | KW_READ TK_IDENTIFIER ';' {$$=Node::createNode(NODE_READ,$2,NULL,NULL,NULL,NULL);}
+     | KW_PRINT lexpr_str ';' {$$=Node::createNode(NODE_PRINT,NULL,$2,NULL,NULL,NULL);}
+     | KW_RETURN expr ';' {$$=Node::createNode(NODE_RETURN,NULL,$2,NULL,NULL,NULL);}
      | block {$$=NULL;}
-     | KW_WHILE '(' expr ')' cmd {$$=NULL;}
-     | KW_IF '(' expr ')' KW_THEN cmd {$$=NULL;}
-     | KW_IF '(' expr ')' KW_THEN cmd KW_ELSE cmd {$$=NULL;}
+     | KW_WHILE '(' expr ')' cmd {$$=Node::createNode(NODE_WHILE,NULL,$3,NULL,NULL,NULL);}
+     | KW_IF '(' expr ')' KW_THEN cmd {$$=Node::createNode(NODE_IF,NULL,$3,$6,NULL,NULL);}
+     | KW_IF '(' expr ')' KW_THEN cmd KW_ELSE cmd {$$=Node::createNode(NODE_IFELSE,NULL,$3,$6,$8,NULL);}
      | ';' {$$=NULL;}
      ;
 
@@ -139,39 +138,54 @@ cmd : TK_IDENTIFIER '=' expr ';' {$$=NULL;}
 expr : '(' expr ')' {$$=NULL;}
      | literal {$$=NULL;}
      | TK_IDENTIFIER {$$=NULL;}
-     | expr "+" expr {$$=NULL;}
-     | expr "-" expr {$$=NULL;}
-     | expr "*" expr {$$=NULL;}
-     | expr "/" expr {$$=NULL;}
-     | expr "<" expr {$$=NULL;}
-     | expr ">" expr {$$=NULL;}
-     | expr "=" expr {$$=NULL;}
-     | expr "&" expr {$$=NULL;}
-     | expr "|" expr {$$=NULL;}
-     | expr "~" expr {$$=NULL;}
-     | TK_IDENTIFIER '[' expr ']' {$$=NULL;}
-     | TK_IDENTIFIER '(' lcallparams ')' {$$=NULL;}
+     | expr "+" expr {$$=Node::createNode(NODE_SUM,NULL,$1,$3,NULL,NULL);}
+     | expr "-" expr {$$=Node::createNode(NODE_SUB,NULL,$1,$3,NULL,NULL);}
+     | expr "*" expr {$$=Node::createNode(NODE_MUL,NULL,$1,$3,NULL,NULL);}
+     | expr "/" expr {$$=Node::createNode(NODE_DIV,NULL,$1,$3,NULL,NULL);}
+     | expr "<" expr {$$=Node::createNode(NODE_LESS,NULL,$1,$3,NULL,NULL);}
+     | expr ">" expr {$$=Node::createNode(NODE_GREATER,NULL,$1,$3,NULL,NULL);}
+     | expr "=" expr {$$=Node::createNode(NODE_EQ,NULL,$1,$3,NULL,NULL);}
+     | expr "&" expr {$$=Node::createNode(NODE_AND,NULL,$1,$3,NULL,NULL);}
+     | expr "|" expr {$$=Node::createNode(NODE_OR,NULL,$1,$3,NULL,NULL);}
+     | expr "~" expr {$$=Node::createNode(NODE_TIL,NULL,$1,$3,NULL,NULL);}
+     | TK_IDENTIFIER '[' expr ']' {$$=Node::createNode(NODE_VECACC,$1,$3,NULL,NULL,NULL);}
+     | TK_IDENTIFIER '(' lcallparams ')' {$$=Node::createNode(NODE_CALL,$1,$3,NULL,NULL,NULL);}
      ;
 
 //lista de expressões ou strings
-lexpr_str : expr lexpr_str {$$=NULL;}
-          | LIT_STRING lexpr_str {$$=NULL;}
+lexpr_str : expr_or_str lexpr_str {$$=Node::createNode(NODE_PRINT_VEC,NULL,$1,$2,NULL,NULL);}
           | {$$=NULL;}
           ;
+
+expr_or_str : expr {$$=NULL;}
+            | LIT_STRING {$$=NULL;}
+            ;
 
 //lista de parametros de chamada de função
 lcallparams : lcallparams ',' expr {$$=NULL;}
             | expr {$$=NULL;}
             ;
 
+
+lcallparams : expr ctail {$$=Node::createNode(NODE_LCPARAMS,NULL,$1,$2,NULL,NULL);}
+	    | {$$=NULL;}
+	    ;
+
+ctail : ',' expr ctail {$$=Node::createNode(NODE_LCPTAIL, NULL, $2, $3, NULL, NULL);}
+     | {$$=NULL;}
+     ;
+
 type : KW_CHAR {$$=NULL;}
      | KW_INT {$$=NULL;}
      ;
-
 
 %%
 
 int yyerror(char *err){
 	fprintf(stderr, "error in line = %d\n", getLineNumber());
 	return 3;
+}
+
+Node* getAst(){
+    return root;
 }
