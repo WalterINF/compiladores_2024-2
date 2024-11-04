@@ -80,13 +80,12 @@ param : type TK_IDENTIFIER
       ;
 
 //lista de parametros
-lparams : param tail
-	    | param
+lparams : param ptail
 	    |
 	    ;
-	
-tail : ',' tail
-     | param
+
+ptail : ',' param ptail
+     |
      ;
 
 //funções
@@ -131,9 +130,13 @@ lexpr_str : expr lexpr_str
           ;
 
 //lista de parametros de chamada de função
-lcallparams : lcallparams ',' expr
-            | expr
-            ;
+lcallparams : expr ctail
+	    |
+	    ;
+
+ctail : ',' expr ctail
+     |
+     ;
 
 op : '+'
    | '-'

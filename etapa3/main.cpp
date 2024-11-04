@@ -45,7 +45,7 @@ int main(int argc, char** argv){
 
 	tree->printTree();
 
-	tree->decompileTree("output_test.txt");
+	tree->decompileTree(argv[2]);
 
 	return 0;
 }
