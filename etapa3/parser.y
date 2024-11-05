@@ -137,16 +137,16 @@ cmd : TK_IDENTIFIER '=' expr ';' {$$=Node::createNode(NODE_ATTR,$1,$3,NULL,NULL,
 expr : '(' expr ')' {$$=$2;}
      | literal {$$=$1;}
      | TK_IDENTIFIER {$$=Node::createNode(NODE_SYMBOL,$1,NULL,NULL,NULL,NULL);}
-     | expr "+" expr {$$=Node::createNode(NODE_SUM,NULL,$1,$3,NULL,NULL);}
-     | expr "-" expr {$$=Node::createNode(NODE_SUB,NULL,$1,$3,NULL,NULL);}
-     | expr "*" expr {$$=Node::createNode(NODE_MUL,NULL,$1,$3,NULL,NULL);}
-     | expr "/" expr {$$=Node::createNode(NODE_DIV,NULL,$1,$3,NULL,NULL);}
-     | expr "<" expr {$$=Node::createNode(NODE_LESS,NULL,$1,$3,NULL,NULL);}
-     | expr ">" expr {$$=Node::createNode(NODE_GREATER,NULL,$1,$3,NULL,NULL);}
-     | expr "=" expr {$$=Node::createNode(NODE_EQ,NULL,$1,$3,NULL,NULL);}
-     | expr "&" expr {$$=Node::createNode(NODE_AND,NULL,$1,$3,NULL,NULL);}
-     | expr "|" expr {$$=Node::createNode(NODE_OR,NULL,$1,$3,NULL,NULL);}
-     | expr "~" expr {$$=Node::createNode(NODE_TIL,NULL,$1,$3,NULL,NULL);}
+     | expr '+' expr {$$=Node::createNode(NODE_SUM,NULL,$1,$3,NULL,NULL);}
+     | expr '-' expr {$$=Node::createNode(NODE_SUB,NULL,$1,$3,NULL,NULL);}
+     | expr '*' expr {$$=Node::createNode(NODE_MUL,NULL,$1,$3,NULL,NULL);}
+     | expr '/' expr {$$=Node::createNode(NODE_DIV,NULL,$1,$3,NULL,NULL);}
+     | expr '<' expr {$$=Node::createNode(NODE_LESS,NULL,$1,$3,NULL,NULL);}
+     | expr '>' expr {$$=Node::createNode(NODE_GREATER,NULL,$1,$3,NULL,NULL);}
+     | expr '=' expr {$$=Node::createNode(NODE_EQ,NULL,$1,$3,NULL,NULL);}
+     | expr '&' expr {$$=Node::createNode(NODE_AND,NULL,$1,$3,NULL,NULL);}
+     | expr '|' expr {$$=Node::createNode(NODE_OR,NULL,$1,$3,NULL,NULL);}
+     | expr '~' expr {$$=Node::createNode(NODE_TIL,NULL,$1,$3,NULL,NULL);}
      | TK_IDENTIFIER '[' expr ']' {$$=Node::createNode(NODE_VECACC,$1,$3,NULL,NULL,NULL);}
      | TK_IDENTIFIER '(' lcallparams ')' {$$=Node::createNode(NODE_CALL,$1,$3,NULL,NULL,NULL);}
      ;
