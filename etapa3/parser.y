@@ -127,7 +127,7 @@ cmd : TK_IDENTIFIER '=' expr ';' {$$=Node::createNode(NODE_ATTR,$1,$3,NULL,NULL,
      | KW_PRINT lexpr_str ';' {$$=Node::createNode(NODE_PRINT,NULL,$2,NULL,NULL,NULL);}
      | KW_RETURN expr ';' {$$=Node::createNode(NODE_RETURN,NULL,$2,NULL,NULL,NULL);}
      | block {$$=$1;}
-     | KW_WHILE '(' expr ')' cmd {$$=Node::createNode(NODE_WHILE,NULL,$3,NULL,NULL,NULL);}
+     | KW_WHILE '(' expr ')' cmd {$$=Node::createNode(NODE_WHILE,NULL,$3,$5,NULL,NULL);}
      | KW_IF '(' expr ')' KW_THEN cmd {$$=Node::createNode(NODE_IF,NULL,$3,$6,NULL,NULL);}
      | KW_IF '(' expr ')' KW_THEN cmd KW_ELSE cmd {$$=Node::createNode(NODE_IFELSE,NULL,$3,$6,$8,NULL);}
      | ';' {$$=NULL;}

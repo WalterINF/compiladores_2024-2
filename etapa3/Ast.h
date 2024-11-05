@@ -66,18 +66,14 @@ class Node {
 public:
   int type;
   Symbol* symbol;
-  Node* children[4];
+  Node* children[4]{};
 
   Node(){
     type = 0;
-    symbol = NULL;
-    children[0] = NULL;
-    children[1] = NULL;
-    children[2] = NULL;
-    children[3] = NULL;
+    symbol = nullptr;
   }
 
-  Node(int type, Symbol* symbol, Node* child0, Node* child1, Node* child2, Node* child3){
+  Node(const int type, Symbol* symbol, Node* child0, Node* child1, Node* child2, Node* child3){
     this->type = type;
     this->symbol = symbol;
     children[0] = child0;
@@ -87,16 +83,15 @@ public:
   }
 
   static Node* createNode(int ntype, Symbol* nsymbol, Node* child0, Node* child1, Node* child2, Node* child3){
-    Node* newnode = new Node(ntype, nsymbol, child0, child1, child2, child3);
+    auto newnode = new Node(ntype, nsymbol, child0, child1, child2, child3);
     return newnode;
   }
 
   void printTree() {
-    //printf("PRINTING...\n");
     printAll(this);
   }
 
-  std::string toString(){
+  std::string toString() const{
     switch (type) {
       case NODE_SYMBOL: return "SYMBOL";
       case NODE_LDEC: return "LDEC";
@@ -156,7 +151,7 @@ public:
 
     switch(root->type){
       case NODE_SYMBOL:
-        fprintf(output, "SYMBOL");
+        fprintf(output, "%s", root->symbol->name.c_str());
         break;
       case NODE_LDEC:
         decompile(root->children[0], output);
@@ -164,25 +159,41 @@ public:
         break;
       case NODE_DECVAR:
         decompile(root->children[0],output); //tipo de retorno
-        fprintf(output, "VAR_NAME"); //nome da variavel
+        fprintf(output, "%s", root->symbol->name.c_str()); //nome da variavel
         fprintf(output, " = ");
         decompile(root->children[1], output); //valor de inicialização
         fprintf(output, ";");
+        fprintf(output, "\n");
         break;
       case NODE_DECVEC:
-        decompile(root->children[0], output); //tipo do vetor
-        fprintf(output, "VEC_NAME"); //nome do vetor
-        fprintf(output, "[");
-        decompile(root->children[0], output); //tamanho
-        fprintf(output, "]");
-        fprintf(output, ";");
+        if(root->children[2] == NULL) {
+          decompile(root->children[0], output); //tipo do vetor
+          fprintf(output, "%s", root->symbol->name.c_str());
+          fprintf(output, "[");
+          decompile(root->children[1], output); //tamanho
+          fprintf(output, "]");
+          fprintf(output, ";");
+          fprintf(output, "\n");
+        }
+        else {
+          decompile(root->children[0], output); //tipo do vetor
+          fprintf(output, "%s", root->symbol->name.c_str());
+          fprintf(output, "[");
+          decompile(root->children[1], output); //tamanho
+          fprintf(output, "]");
+          fprintf(output, "=");
+          decompile(root->children[2], output);
+          fprintf(output, ";");
+          fprintf(output, "\n");
+        }
         break;
       case NODE_DECFUNC:
         decompile(root->children[0],output); //tipo de retorno
-        fprintf(output, "FUNC_NAME"); //nome da função
+        fprintf(output, "%s", root->symbol->name.c_str()); //nome da função
         fprintf(output, "(");
         decompile(root->children[1], output); //parametros
         fprintf(output, ")");
+        fprintf(output, "\n");
         decompile(root->children[2], output); //escopo
         break;
       case NODE_SUM:
@@ -217,7 +228,7 @@ public:
         break;
       case NODE_EQ:
         decompile(root->children[0], output);
-        fprintf(output, " == ");
+        fprintf(output, " = ");
         decompile(root->children[1], output);
         break;
       case NODE_AND:
@@ -236,13 +247,13 @@ public:
         decompile(root->children[1], output);
         break;
       case NODE_VECACC:
-        fprintf(output, "VEC_NAME"); //nome do vetor
+        fprintf(output, "%s", root->symbol->name.c_str()); //nome do vetor
         fprintf(output, "[");
         decompile(root->children[0], output);
         fprintf(output, "]");
         break;
       case NODE_CALL:
-        fprintf(output, "FUNC_NAME"); //nome da função
+        fprintf(output, "%s", root->symbol->name.c_str()); //nome da função
         fprintf(output, "(");
         decompile(root->children[0], output); //lista de parametros
         fprintf(output, ")");
@@ -252,34 +263,45 @@ public:
         decompile(root->children[1], output);
       break;
       case NODE_ATTR:
-        fprintf(output, "VAR_NAME"); //nome da variavel
+        fprintf(output, "%s", root->symbol->name.c_str()); //nome da variavel
         fprintf(output, " = ");
         decompile(root->children[0], output); //valor atribuido
         fprintf(output, ";");
+        fprintf(output, "\n");
         break;
       case NODE_READ:
-        fprintf(output, "read");
-        decompile(root->children[0], output);
+        fprintf(output, "read ");
+        fprintf(output, "%s",root->symbol->name.c_str());
+        fprintf(output, ";");
+        fprintf(output, "\n");
         break;
       case NODE_PRINT:
-        fprintf(output, "print");
+        fprintf(output, "print ");
         decompile(root->children[0], output);
+        fprintf(output, ";");
+        fprintf(output, "\n");
         break;
       case NODE_RETURN:
-        fprintf(output, "return");
+        fprintf(output, "return ");
         decompile(root->children[0], output);
+        fprintf(output, ";");
+        fprintf(output, "\n");
         break;
       case NODE_WHILE:
-        fprintf(output, "while");
+        fprintf(output, "while ");
         fprintf(output, "(");
         decompile(root->children[0], output);
         fprintf(output, ")");
+        fprintf(output, "\n");
+        decompile(root->children[1], output);
         break;
       case NODE_IF:
         fprintf(output, "if");
         fprintf(output, "(");
         decompile(root->children[0], output);
         fprintf(output, ")");
+        fprintf(output, " then");
+        fprintf(output, "\n");
         decompile(root->children[1], output);
         break;
       case NODE_IFELSE:
@@ -287,12 +309,15 @@ public:
         fprintf(output, "(");
         decompile(root->children[0], output);
         fprintf(output, ")");
+        fprintf(output, " then");
+        fprintf(output, "\n");
         decompile(root->children[1], output);
         fprintf(output, "else");
+        fprintf(output, "\n");
         decompile(root->children[2], output);
         break;
       case NODE_LITERAL:
-        fprintf(output, "LITERAL"); //valor literal
+        fprintf(output, "%s", root->symbol->name.c_str()); //valor literal
         break;
       case NODE_PRINT_VEC:
         decompile(root->children[0], output);
@@ -300,13 +325,17 @@ public:
         break;
       case NODE_LCPARAMS:
         decompile(root->children[0], output);
-        fprintf(output, ",");
-        decompile(root->children[1], output);
+        if(root->children[1] != NULL) {
+          fprintf(output, ",");
+          decompile(root->children[1], output);
+        }
         break;
       case NODE_LCPTAIL:
         decompile(root->children[0], output);
-        fprintf(output, ",");
-        decompile(root->children[1], output);
+        if(root->children[1] != NULL) {
+          fprintf(output, ",");
+          decompile(root->children[1], output);
+        }
         break;
       case NODE_INT:
         fprintf(output, "int ");
@@ -316,32 +345,44 @@ public:
         break;
       case NODE_BLOCK:
         fprintf(output, "{");
+        fprintf(output, "\n");
         decompile(root->children[0], output);
         fprintf(output, "}");
+        fprintf(output, "\n");
         break;
       case NODE_VECATTR:
-        fprintf(output, "VEC_NAME"); //nome do vetor
+        fprintf(output, "%s", root->symbol->name.c_str()); //nome do vetor
         fprintf(output, "[");
         decompile(root->children[0], output); //indice
         fprintf(output, "]");
         fprintf(output, " = ");
         decompile(root->children[1], output); //valor atribuido
         fprintf(output, ";");
+        fprintf(output, "\n");
         break;
       case NODE_PARAM:
         decompile(root->children[0], output); //tipo do parametro
-        fprintf(output, "PARAM_NAME"); //nome do parametro
+        fprintf(output, "%s", root->symbol->name.c_str()); //nome do parametro
         break;
       case NODE_LPARAMS:
         decompile(root->children[0], output);
-        fprintf(output, ",");
-        decompile(root->children[1], output);
+        if(root->children[1] != NULL) {
+          fprintf(output, ",");
+          decompile(root->children[1], output);
+        }
         break;
       case NODE_LPTAIL:
         decompile(root->children[0], output);
-        fprintf(output, ",");
-        decompile(root->children[1], output);
+        if(root->children[1] != NULL) {
+          fprintf(output, ",");
+          decompile(root->children[1], output);
+        }
         break;
+      case NODE_LIT_VEC:
+        decompile(root->children[0], output);
+        fprintf(output, " ");
+        decompile(root->children[1], output);
+      break;
       default: printf("\nERROR IN DECOMPILING");
       break;
     }
