@@ -134,11 +134,12 @@ public:
       case NODE_PARAM: return "PARAM";
       case NODE_LPTAIL: return "LPTAIL";
       case NODE_LPARAMS: return "LPARAMS";
+      case NODE_LIT_VEC: return "LIT_VEC";
     }
     return std::to_string(type);
   }
 
-  void decompileTree(char *filepath) {
+  void decompileToFile(char *filepath) {
     FILE *file = fopen(filepath, "w");
     if(file)
       decompile(this,file);
@@ -156,17 +157,18 @@ public:
     switch(root->type){
       case NODE_SYMBOL:
         fprintf(output, "SYMBOL");
-      break;
+        break;
       case NODE_LDEC:
         decompile(root->children[0], output);
         decompile(root->children[1], output);
-      break;
-      case NODE_DECVAR: break;
+        break;
+      case NODE_DECVAR:
         decompile(root->children[0],output); //tipo de retorno
         fprintf(output, "VAR_NAME"); //nome da variavel
         fprintf(output, " = ");
         decompile(root->children[1], output); //valor de inicialização
         fprintf(output, ";");
+        break;
       case NODE_DECVEC:
         decompile(root->children[0], output); //tipo do vetor
         fprintf(output, "VEC_NAME"); //nome do vetor
@@ -182,7 +184,6 @@ public:
         decompile(root->children[1], output); //parametros
         fprintf(output, ")");
         decompile(root->children[2], output); //escopo
-        fprintf(output, ";");
         break;
       case NODE_SUM:
         decompile(root->children[0], output);
@@ -245,7 +246,6 @@ public:
         fprintf(output, "(");
         decompile(root->children[0], output); //lista de parametros
         fprintf(output, ")");
-        fprintf(output, ";");
         break;
       case NODE_LCMDS:
         decompile(root->children[0], output);
@@ -360,9 +360,9 @@ private:
     printf("%s", node->toString().c_str());
 
     if(node->symbol == NULL) {
-      printf(" NULL");
+      //printf(" NULL");
     } else {
-    printf(" (%s)", node->symbol->name.c_str());
+    printf(" %s", node->symbol->name.c_str());
     }
 
     printf("\n");
