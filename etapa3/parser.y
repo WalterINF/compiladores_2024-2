@@ -41,11 +41,17 @@ Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
 
 %token TOKEN_ERROR
 
-%left '|' '~'
+%left '|' '~'  
 %left '=' '&'
 %left '<' '>'
 %left '+' '-'
 %left '*' '/'
+
+%right KW_THEN KW_ELSE
+
+%left TK_IDENTIFIER
+%left '('
+%left '['
 
 %type <tree> program
 %type <tree> literal
