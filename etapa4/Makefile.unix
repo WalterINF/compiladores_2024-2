@@ -1,0 +1,23 @@
+CXX = g++
+CXXFLAGS = -Wall -std=c++11
+
+etapa3: y.tab.o lex.yy.o Symbols.o main.o Ast.o
+	$(CXX) -o etapa3 y.tab.o lex.yy.o Symbols.o main.o
+
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) $< -c
+
+y.tab.o: y.tab.c
+	$(CXX) -c y.tab.c
+
+y.tab.c: parser.y
+	yacc -d -v parser.y
+
+lex.yy.o: lex.yy.c
+	$(CXX) -c lex.yy.c
+
+lex.yy.c: scanner.l
+	flex --header-file=lex.yy.h scanner.l
+
+clean:
+	rm -f *.o etapa3 lex.yy.c lex.yy.h y.tab.c y.tab.h y.output
