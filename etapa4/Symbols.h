@@ -16,6 +16,7 @@ Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
 #define SYMBOL_IDENTIFIER 4
 #define SYMBOL_VARIABLE 5
 #define SYMBOL_FUNCTION 6
+#define SYMBOL_VECTOR 7
 
 class Symbol {
     public:
@@ -33,7 +34,7 @@ class SymbolTable {
     public:
         SymbolTable() {}
 
-        void insert(Symbol symbol);
+        Symbol * insert(Symbol symbol);
         void print();
         void clear();
 

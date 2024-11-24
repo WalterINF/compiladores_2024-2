@@ -6,8 +6,13 @@ Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
 #include "Symbols.h"
 
 /* Inserts a Symbol object into the table */
-void SymbolTable::insert(Symbol symbol) {
+Symbol *SymbolTable::insert(Symbol symbol) {
     table.insert(std::pair<std::string, Symbol>(symbol.name, symbol));
+    auto it = table.find(symbol.name);
+    if (it != table.end()) {
+        return &it->second;
+    }
+    throw std::runtime_error("Symbol not found");
 }
 
 /* Prints the table */

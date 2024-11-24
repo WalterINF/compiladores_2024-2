@@ -43,7 +43,7 @@ return                     { return KW_RETURN; }
 <MULTILINE_COMMENT>"**/"   { BEGIN(INITIAL); }
 <MULTILINE_COMMENT>.       { }
 
-[a-zA-Z0-9]+               { yylval.symbol = new Symbol(&yytext[0], SYMBOL_IDENTIFIER); symbol_table.insert(Symbol(&yytext[0], SYMBOL_IDENTIFIER)); return TK_IDENTIFIER; }
+[a-zA-Z0-9]+               { yylval.symbol = symbol_table.insert(Symbol(&yytext[0], SYMBOL_IDENTIFIER)); return TK_IDENTIFIER; }
 
 .                          { return TOKEN_ERROR; }
 

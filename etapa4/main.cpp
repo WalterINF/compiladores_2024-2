@@ -5,10 +5,10 @@ Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
 
 #include <iostream>
 #include <stdio.h>
-#include <map>
 #include <string>
 #include "Symbols.h"
 #include "Ast.h"
+#include "Semantic.h"
 
 int yylex();
 extern char *yytext;
@@ -42,11 +42,13 @@ int main(int argc, char** argv){
 
 	Node* tree = getAst();
 
-	tree->verify();
+	Semantic::check_and_set_declarations(tree);
 
 	tree->printTree();
 
 	tree->decompileToFile(argv[2]);
+
+	std::cout << symbol_table;
 
 	return 0;
 }
