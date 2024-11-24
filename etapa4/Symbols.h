@@ -14,19 +14,30 @@ Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
 #define SYMBOL_LIT_STRING 2
 #define SYMBOL_LIT_CHAR 3
 #define SYMBOL_IDENTIFIER 4
+
+//após verificação semântica, SYMBOL_IDENTIFIER é substituído por um dos seguintes
 #define SYMBOL_VARIABLE 5
 #define SYMBOL_FUNCTION 6
 #define SYMBOL_VECTOR 7
+
+#define DATATYPE_INT 8
+#define DATATYPE_CHAR 9
 
 class Symbol {
     public:
         std::string name;
         int type;
+        u_int8_t datatype;
         /* probably more data here in future steps */
 
         Symbol(char* name, int type) {
             this->name = std::string(name);
             this->type = type;
+            this->datatype = 0;
+        }
+
+        void setDatatype(u_int8_t datatype) {
+            this->datatype = datatype;
         }
 };
 

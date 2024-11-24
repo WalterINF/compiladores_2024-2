@@ -19,6 +19,13 @@ void Semantic::check_and_set_declarations(Node *root){
         SemanticErrors++;
       }
       root->symbol->type = SYMBOL_VARIABLE;
+      if(root->children[0]->type == NODE_INT) {
+          root->symbol->datatype == DATATYPE_INT;
+      }
+      if(root->children[0]->type == NODE_CHAR) {
+        root->symbol->datatype == DATATYPE_CHAR;
+      }
+
       break;
     case NODE_DECVEC:
       if(root->symbol->type != SYMBOL_IDENTIFIER) {
@@ -58,4 +65,59 @@ int Semantic::check_undeclared(SymbolTable table) {
   }
   return undeclared;
 }
+
+void Semantic::check_operands(Node *root) {
+  if(root == nullptr) {
+    return;
+  }
+  switch(root->type) {
+    case NODE_DIV:
+    case NODE_MUL:
+    case NODE_SUB:
+    case NODE_SUM:
+      if(!is_number(root->children[0])) {
+        SemanticErrors++;
+        fprintf(stderr, "SemanticError: invalid left operand\n");
+      }
+      if(!is_number(root->children[1])) {
+        SemanticErrors++;
+        fprintf(stderr, "SemanticError: invalid right operand\n");
+      }
+      break;
+    case NODE_EQ:
+    case NODE_OR:
+    case NODE_TIL:
+    case NODE_AND:
+      if(!isRelationalOp(root->children[0])) {
+        SemanticErrors++;
+        fprintf(stderr, "SemanticError: invalid left operand\n");
+      }
+      if(!isRelationalOp(root->children[1])) {
+        SemanticErrors++;
+        fprintf(stderr, "SemanticError: invalid right operand\n");
+      }
+      break;
+    case NODE_LESS:
+    case NODE_GREATER:
+      if(!is_number(root->children[0])) {
+        SemanticErrors++;
+        fprintf(stderr, "SemanticError: invalid left operand\n");
+      }
+      if(!is_number(root->children[1])) {
+        SemanticErrors++;
+        fprintf(stderr, "SemanticError: invalid right operand\n");
+      }
+      break;
+    default:
+      break;
+  }
+  for(const auto& child : root->children) {
+    check_operands(child);
+  }
+}
+
+
+
+
+
 

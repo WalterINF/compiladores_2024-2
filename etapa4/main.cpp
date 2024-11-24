@@ -44,12 +44,12 @@ int main(int argc, char** argv){
 
 	Semantic::check_and_set_declarations(tree);
 	Semantic::check_undeclared(symbol_table);
+	Semantic::check_operands(tree);
 
 	tree->printTree();
 
 	tree->decompileToFile(argv[2]);
 
-	std::cout << symbol_table;
 
 	return 0;
 }
