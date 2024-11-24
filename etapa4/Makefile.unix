@@ -1,8 +1,9 @@
 CXX = g++
 CXXFLAGS = -Wall -std=c++11
+TARGET_NAME = etapa4
 
-etapa3: y.tab.o lex.yy.o Symbols.o main.o Ast.o
-	$(CXX) -o etapa3 y.tab.o lex.yy.o Symbols.o main.o
+$(TARGET_NAME): y.tab.o lex.yy.o Symbols.o Semantic.o main.o Ast.o
+	$(CXX) -o $(TARGET_NAME) y.tab.o lex.yy.o Semantic.o Symbols.o main.o
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $< -c
@@ -20,4 +21,4 @@ lex.yy.c: scanner.l
 	flex --header-file=lex.yy.h scanner.l
 
 clean:
-	rm -f *.o etapa3 lex.yy.c lex.yy.h y.tab.c y.tab.h y.output
+	rm -f *.o $(TARGET_NAME) lex.yy.c lex.yy.h y.tab.c y.tab.h y.output

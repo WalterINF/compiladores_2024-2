@@ -1,6 +1,0 @@
-int main() {
-	if (a = #1) then
-		if (a = #2) then 
-			print "Dois";
-	else print "Maior";
-}
