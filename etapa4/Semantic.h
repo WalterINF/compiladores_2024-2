@@ -11,11 +11,11 @@
 extern int semantic_errors;
 
 class Semantic {
-       public:
-              static void check_and_set_declarations(Node *root);
-              static void check_undeclared(SymbolTable table);
+public:
+    static void verify();
+    static void check_and_set_declarations(Node *root);
+    static int check_undeclared(SymbolTable table);
 };
-
 
 
 #endif //SEMANTIC_H

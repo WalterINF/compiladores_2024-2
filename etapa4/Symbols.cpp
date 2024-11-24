@@ -36,6 +36,15 @@ void SymbolTable::clear() {
     table.clear();
 }
 
+int SymbolTable::length() {
+    return table.size();
+}
+
+std::map<std::string, Symbol> SymbolTable::getTable() {
+    return table;
+}
+
+
 /* Overloads the << operator to print the table */
 std::ostream& operator<<(std::ostream& os, const SymbolTable& table) {
     for (const auto& pair : table.table) {

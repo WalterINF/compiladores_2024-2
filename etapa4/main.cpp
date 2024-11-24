@@ -43,6 +43,7 @@ int main(int argc, char** argv){
 	Node* tree = getAst();
 
 	Semantic::check_and_set_declarations(tree);
+	Semantic::check_undeclared(symbol_table);
 
 	tree->printTree();
 

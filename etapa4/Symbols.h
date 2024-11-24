@@ -37,6 +37,9 @@ class SymbolTable {
         Symbol * insert(Symbol symbol);
         void print();
         void clear();
+        int length();
+        Symbol *symbolAt(int index);
+        std::map<std::string, Symbol> getTable();
 
         Symbol get(std::string name);
 

@@ -1,0 +1,21 @@
+//multipla declaracao de funcao
+
+int function1(){return #0;}
+
+int function2(){return #0;}
+
+int function1(){return #0;}
+
+//multipla delcaracao de variavel
+
+int a = #0;
+char b = 'c';
+int a = #4;
+
+//variavel nao declarada
+
+int function3()
+{
+    d = #6;
+    e = #15;
+}
