@@ -14,12 +14,12 @@ void Semantic::check_and_set_declarations(Node *root) {
     switch (root->type) {
         case NODE_PARAM:
             root->symbol->type = SYMBOL_VARIABLE;
-        break;
+            break;
         case NODE_DECVAR:
             if (root->symbol->type != SYMBOL_IDENTIFIER) {
+                SemanticErrors++;
                 fprintf(stderr, "SemanticError in line %d: Redeclared variable: %s\n", root->line_number,
                         root->symbol->name.c_str());
-                SemanticErrors++;
             }
             root->symbol->type = SYMBOL_VARIABLE;
             if (root->children[0]->type == NODE_INT) {
@@ -31,9 +31,9 @@ void Semantic::check_and_set_declarations(Node *root) {
             break;
         case NODE_DECVEC:
             if (root->symbol->type != SYMBOL_IDENTIFIER) {
+                SemanticErrors++;
                 fprintf(stderr, "SemanticError in line %d: Redeclared vector: %s\n", root->line_number,
                         root->symbol->name.c_str());
-                SemanticErrors++;
             }
             root->symbol->type = SYMBOL_VECTOR;
             root->symbol->datatype = DATATYPE_NONE;
@@ -94,7 +94,7 @@ void Semantic::check_types(Node *root) {
             }
             break;
         case NODE_DECFUNC:
-            if (root->symbol->datatype != get_return_type(root)) {
+            if (!checkTypeCompatibility(root->symbol->datatype, get_return_type(root))) {
                 SemanticErrors++;
                 fprintf(stderr, "SemanticError in line %d: Return type mismatch in function %s\n", root->line_number,
                         root->symbol->name.c_str());
@@ -105,15 +105,15 @@ void Semantic::check_types(Node *root) {
                 SemanticErrors++;
                 fprintf(stderr, "SemanticError in line %d: Attribution must be to a variable \n", root->line_number);
             }
-        if (!checkTypeCompatibility(root->symbol->datatype, getType(root->children[0]))
-        ) {
-            SemanticErrors++;
-            fprintf(stderr, "SemanticError in line %d: incompatible types: %s and %s\n",
-                    root->line_number,
-                    Symbol::typeToString(root->symbol->datatype).c_str(),
-                    Symbol::typeToString(getType(root->children[0])).c_str());
-        }
-        break;
+            if (!checkTypeCompatibility(root->symbol->datatype, getType(root->children[0]))
+            ) {
+                SemanticErrors++;
+                fprintf(stderr, "SemanticError in line %d: incompatible types: %s and %s\n",
+                        root->line_number,
+                        Symbol::typeToString(root->symbol->datatype).c_str(),
+                        Symbol::typeToString(getType(root->children[0])).c_str());
+            }
+            break;
         case NODE_VECATTR:
             if (!checkTypeCompatibility(root->symbol->datatype, getType(root->children[1]))) {
                 SemanticErrors++;
@@ -123,23 +123,22 @@ void Semantic::check_types(Node *root) {
                         Symbol::typeToString(getType(root->children[1])).c_str()
                 );
             }
-        break;
+            break;
         default:
             break;
     }
+    for (const auto child: root->children) {
+        check_types(child);
+    }
 }
 
-int Semantic::check_undeclared(SymbolTable table) {
-    int undeclared = 0;
-
+void Semantic::check_undeclared(SymbolTable table) {
     for (const auto &pair: table.getTable()) {
         if (pair.second.type == SYMBOL_IDENTIFIER) {
-            undeclared++;
             SemanticErrors++;
             fprintf(stderr, "SemanticError: Undeclared identifier \"%s\"\n", pair.second.name.c_str());
         }
     }
-    return undeclared;
 }
 
 void Semantic::check_operands(Node *root) {
@@ -198,13 +197,14 @@ void Semantic::check_usage(Node *root) {
     }
     switch (root->type) {
         case NODE_SYMBOL:
-            if(root->symbol->type == SYMBOL_FUNCTION || root->symbol->type == SYMBOL_VECTOR) {
+            if (root->symbol->type == SYMBOL_FUNCTION || root->symbol->type == SYMBOL_VECTOR) {
+                SemanticErrors++;
                 fprintf(stderr, "SemanticError in line %d: Not a variable: %s\n", root->line_number,
                         root->symbol->name.c_str());
             }
             break;
         case NODE_ATTR:
-            if(root->symbol->type != SYMBOL_VARIABLE) {
+            if (root->symbol->type != SYMBOL_VARIABLE) {
                 SemanticErrors++;
                 fprintf(stderr, "SemanticError in line %d: Not a variable: %s\n", root->line_number,
                         root->symbol->name.c_str());
@@ -256,17 +256,17 @@ void Semantic::check_usage(Node *root) {
 }
 
 void Semantic::check_calls(Node *root, Node *current_node) {
-    if(root == nullptr || current_node == nullptr) {
+    if (root == nullptr || current_node == nullptr) {
         return;
     }
-    if(current_node->type == NODE_CALL) {
-        if(!compareAllParams(getFunctionParams(root,current_node->symbol),current_node->children[0])) {
+    if (current_node->type == NODE_CALL) {
+        if (!compareAllParams(getFunctionParams(root, current_node->symbol), current_node->children[0])) {
             SemanticErrors++;
             fprintf(stderr, "SemanticError in line %d: invalid call\n", current_node->line_number);
         }
     }
     for (const auto &child: current_node->children) {
-        check_calls(root,child);
+        check_calls(root, child);
     }
 }
 
@@ -311,13 +311,13 @@ int Semantic::is_char(const Node *root) {
 }
 
 int Semantic::getType(const Node *root) {
-    if(is_number(root)) {
+    if (is_number(root)) {
         return DATATYPE_INT;
     }
-    if(is_char(root)) {
+    if (is_char(root)) {
         return DATATYPE_CHAR;
     }
-    if(is_bool(root)) {
+    if (is_bool(root)) {
         return DATATYPE_BOOL;
     }
     return DATATYPE_NONE;
@@ -327,8 +327,8 @@ int Semantic::checkTypeCompatibility(int type1, int type2) {
     return
 
             (type1 == type2) ||
-                (type1 == DATATYPE_CHAR && type2 == DATATYPE_CHAR) ||
-                    (type1 == DATATYPE_INT && type2 == DATATYPE_CHAR);
+            (type1 == DATATYPE_CHAR && type2 == DATATYPE_INT) ||
+            (type1 == DATATYPE_INT && type2 == DATATYPE_CHAR);
 }
 
 int Semantic::get_return_type(Node *root) {
@@ -350,7 +350,6 @@ int Semantic::get_return_type(Node *root) {
     }
     return type;
 }
-
 
 
 int Semantic::count_vector_size(Node *node) {
@@ -378,20 +377,20 @@ int Semantic::get_vector_type(Node *node) {
         return 0;
     }
     u_int8_t first_datatype = DATATYPE_NONE;
-    if(is_number(node->children[0])) {
+    if (is_number(node->children[0])) {
         first_datatype = DATATYPE_INT;
-    }else if (is_char(node->children[0])) {
+    } else if (is_char(node->children[0])) {
         first_datatype = DATATYPE_CHAR;
     }
     u_int8_t current_type = DATATYPE_NONE;
     Node *curr = node;
     while (curr->children[1] != nullptr && curr->type == NODE_LIT_VEC) {
-        if(is_number(node->children[0])) {
+        if (is_number(node->children[0])) {
             current_type = DATATYPE_INT;
-        }else if (is_char(node->children[0])) {
+        } else if (is_char(node->children[0])) {
             current_type = DATATYPE_CHAR;
         }
-        if(current_type != first_datatype) {
+        if (current_type != first_datatype) {
             return DATATYPE_NONE;
         }
         curr = curr->children[1];
@@ -400,8 +399,8 @@ int Semantic::get_vector_type(Node *node) {
 }
 
 Node *Semantic::getFunctionParams(Node *root, Symbol *symbol) {
-    if(root == nullptr || symbol == nullptr) return nullptr;
-    Node* lparams;
+    if (root == nullptr || symbol == nullptr) return nullptr;
+    Node *lparams;
     if (root->symbol == symbol && root->type == NODE_DECFUNC) {
         return root->children[1];
     }
@@ -415,16 +414,16 @@ Node *Semantic::getFunctionParams(Node *root, Symbol *symbol) {
 }
 
 int Semantic::compareParams(Node *fparam, Node *cparam) {
-    if(fparam == nullptr && cparam == nullptr) {
+    if (fparam == nullptr && cparam == nullptr) {
         return true;
     }
-    if(fparam->children[0]->type == NODE_INT) {
-        if(getType(cparam) == DATATYPE_INT) {
+    if (fparam->children[0]->type == NODE_INT) {
+        if (getType(cparam) == DATATYPE_INT) {
             return true;
         }
     }
-    if(fparam->children[0]->type == NODE_CHAR) {
-        if(getType(cparam->children[0]) == DATATYPE_CHAR) {
+    if (fparam->children[0]->type == NODE_CHAR) {
+        if (getType(cparam->children[0]) == DATATYPE_CHAR) {
             return true;
         }
     }
@@ -435,21 +434,17 @@ int Semantic::compareParams(Node *fparam, Node *cparam) {
 int Semantic::compareAllParams(Node *fparams, Node *callparams) {
     Node *func = fparams;
     Node *call = callparams;
-    while(func != nullptr && call != nullptr) {
-        if(!compareParams(func->children[0], call->children[0])) {
+    while (func != nullptr && call != nullptr) {
+        if (!compareParams(func->children[0], call->children[0])) {
             return false;
         }
         func = func->children[1];
         call = call->children[1];
     }
-    if(func != nullptr || call != nullptr) return false;
+    if (func != nullptr || call != nullptr) return false;
     return true;
 }
 
-
-
-
-
-
-
-
+int Semantic::getSemanticErrors() {
+    return SemanticErrors;
+}

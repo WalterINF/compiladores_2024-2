@@ -22,21 +22,21 @@ int isRunning();
 int main(int argc, char** argv){
 	if (argc < 2){
 		std::cout << "Número incorreto de argumentos" << std::endl;
-		return 1;
+		exit(1);
     }
 
     yyin = fopen(argv[1], "r");
     if(yyin == nullptr){
     	std::cout << "Não foi possível abrir o arquivo: " << argv[1] << std::endl;
-      	return 1;
+      	exit(2);
     }
 
     if(yyparse()){
       exit(3);
     } else {
     	std::cout << "Parsed Successfully!" << std::endl;
-        printf("----------Tabela de simbolos ---------\n");
-        std::cout << symbol_table;
+        //printf("----------Tabela de simbolos ---------\n");
+        //std::cout << symbol_table;
 
     }
 
@@ -48,6 +48,12 @@ int main(int argc, char** argv){
 	Semantic::check_operands(tree);
 	Semantic::check_usage(tree);
 	Semantic::check_calls(tree,tree);
+
+	int semanticErrors = Semantic::getSemanticErrors();
+	if(semanticErrors > 0) {
+		std::cout << "Error: " << semanticErrors << " error(s) found in file." << std::endl;
+		exit(4);
+	}
 
 	tree->printTree();
 

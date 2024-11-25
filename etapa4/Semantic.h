@@ -44,10 +44,11 @@ public:
 
     static void check_and_set_declarations(Node *root);
     static void check_types(Node *root);
-    static int check_undeclared(SymbolTable table);
+    static void check_undeclared(SymbolTable table);
     static void check_operands(Node *root);
     static void check_usage(Node *root);
     static void check_calls(Node *root, Node *current_node);
+    static int getSemanticErrors();
 
 private:
     static int is_bool(const Node *root);
