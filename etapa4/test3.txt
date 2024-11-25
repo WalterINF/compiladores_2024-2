@@ -7,11 +7,11 @@ int vec1[#4];
 int vec2[#5] = #1 #2 #3 #4;
 char vec3[#3] = 'a' #4 'b';
 
-int main(int a){
+int fun1(int a, int b){
     var1 = vec2[#2];
     return #0;
     vec2[#4] = (#5 + ('c' < #5));
 
-    var1 = main(#4);
+    var1 = fun1(#7,#4);
 }
 

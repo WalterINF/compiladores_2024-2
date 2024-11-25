@@ -402,9 +402,7 @@ int Semantic::get_vector_type(Node *node) {
 Node *Semantic::getFunctionParams(Node *root, Symbol *symbol) {
     if(root == nullptr || symbol == nullptr) return nullptr;
     Node* lparams;
-
     if (root->symbol == symbol && root->type == NODE_DECFUNC) {
-        //fprintf(stderr,"GOT PARAM\n");
         return root->children[1];
     }
     for (const auto &child: root->children) {
@@ -418,23 +416,18 @@ Node *Semantic::getFunctionParams(Node *root, Symbol *symbol) {
 
 int Semantic::compareParams(Node *fparam, Node *cparam) {
     if(fparam == nullptr && cparam == nullptr) {
-        //fprintf(stderr,"EQUAL PARAMS\n");
         return true;
     }
-
     if(fparam->children[0]->type == NODE_INT) {
-        if(getType(cparam->children[0]) == DATATYPE_INT) {
-            //fprintf(stderr,"EQUAL PARAMS\n");
+        if(getType(cparam) == DATATYPE_INT) {
             return true;
         }
     }
     if(fparam->children[0]->type == NODE_CHAR) {
         if(getType(cparam->children[0]) == DATATYPE_CHAR) {
-            //fprintf(stderr,"EQUAL PARAMS\n");
             return true;
         }
     }
-    //fprintf(stderr,"DIFFERENT PARAMS\n");
     return false;
 }
 
@@ -442,7 +435,6 @@ int Semantic::compareParams(Node *fparam, Node *cparam) {
 int Semantic::compareAllParams(Node *fparams, Node *callparams) {
     Node *func = fparams;
     Node *call = callparams;
-    fprintf(stderr,"COMPARING PARAMS\n");
     while(func != nullptr && call != nullptr) {
         if(!compareParams(func->children[0], call->children[0])) {
             return false;
