@@ -22,6 +22,7 @@ Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
 
 #define DATATYPE_INT 8
 #define DATATYPE_CHAR 9
+#define DATATYPE_NONE 10
 
 class Symbol {
     public:

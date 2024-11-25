@@ -1,47 +1,90 @@
 //multipla declaracao de funcao
 
 int function1(){return #0;}
-
 int function2(){return #0;}
-
 int function1(){return #0;}
 
 //multipla delcaracao de variavel
 
+int var1 = #0;
 int a = #0;
 char b = 'c';
 int a = #4;
 int vector[#5];
+int vector2[#5] = #1 #2 #3 #4 #5;
+int vector3[#2] = #1;
 
 //variavel nao declarada
 
 int function3()
 {
     d = #6;
-    e = #15;
+    return #0;
 }
 
 //indexação de variável
 
 int function4()
 {
-    b[#4] = 'd';
-
+    a[#4] = #3;
+    return #0;
 }
 
-//acesso a vetor sem indexação
-
-int function4()
-{
-    vector = #7;
-
-}
-
-//acesso a vetor sem indexação
+//chamada de variável
 
 int function5()
 {
+    var1 = b();
+    return #0;
+}
+
+//chamada de função
+
+int function6()
+{
+    b[#4] = 'd';
+    return #0;
+
+}
+
+//acesso a vetor com indice errado
+
+int function7()
+{
+    vector['a'] = #7;
+    return #0;
+
+}
+
+//acesso a vetor sem indexação
+
+int function8()
+{
     a = #5 + (#4 < #5);
     a = #7 + #7;
+    return #0;
+}
 
+//tipos incompatíveis
+
+int function9()
+{
+    a = 'v';
+    b = #0;
+    return #0;
+}
+
+//retorno incompatível
+
+int function10()
+{
+    return 'c';
+}
+
+//função sem retorno
+
+int function11()
+{
+    a = #0;
+    b = #0;
 }

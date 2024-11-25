@@ -60,23 +60,25 @@ public:
   int type;
   Symbol* symbol;
   Node* children[4]{};
+  int line_number;
 
   Node(){
     type = 0;
     symbol = nullptr;
   }
 
-  Node(const int type, Symbol* symbol, Node* child0, Node* child1, Node* child2, Node* child3){
+  Node(const int type, Symbol* symbol, Node* child0, Node* child1, Node* child2, Node* child3, int line_number){
     this->type = type;
     this->symbol = symbol;
+    this->line_number = line_number;
     children[0] = child0;
     children[1] = child1;
     children[2] = child2;
     children[3] = child3;
   }
 
-  static Node* createNode(int ntype, Symbol* nsymbol, Node* child0, Node* child1, Node* child2, Node* child3){
-    auto newnode = new Node(ntype, nsymbol, child0, child1, child2, child3);
+  static Node* createNode(int ntype, Symbol* nsymbol, Node* child0, Node* child1, Node* child2, Node* child3, int line_number){
+    auto newnode = new Node(ntype, nsymbol, child0, child1, child2, child3, line_number);
     return newnode;
   }
 

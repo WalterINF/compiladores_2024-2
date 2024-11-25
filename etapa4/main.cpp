@@ -45,8 +45,9 @@ int main(int argc, char** argv){
 	Semantic::check_and_set_declarations(tree);
 	Semantic::check_undeclared(symbol_table);
 	Semantic::check_operands(tree);
+	Semantic::check_usage(tree);
 
-	tree->printTree();
+	//tree->printTree();
 
 	tree->decompileToFile(argv[2]);
 
