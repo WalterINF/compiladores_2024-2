@@ -26,7 +26,7 @@ int main(int argc, char** argv){
     }
 
     yyin = fopen(argv[1], "r");
-    if(yyin == NULL){
+    if(yyin == nullptr){
     	std::cout << "Não foi possível abrir o arquivo: " << argv[1] << std::endl;
       	return 1;
     }
@@ -43,11 +43,13 @@ int main(int argc, char** argv){
 	Node* tree = getAst();
 
 	Semantic::check_and_set_declarations(tree);
+	Semantic::check_types(tree);
 	Semantic::check_undeclared(symbol_table);
 	Semantic::check_operands(tree);
 	Semantic::check_usage(tree);
+	Semantic::check_calls(tree,tree);
 
-	//tree->printTree();
+	tree->printTree();
 
 	tree->decompileToFile(argv[2]);
 

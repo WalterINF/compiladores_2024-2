@@ -22,6 +22,7 @@ Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
 
 #define DATATYPE_INT 8
 #define DATATYPE_CHAR 9
+#define DATATYPE_BOOL 11
 #define DATATYPE_NONE 10
 
 class Symbol {
@@ -39,6 +40,35 @@ class Symbol {
 
         void setDatatype(u_int8_t datatype) {
             this->datatype = datatype;
+        }
+
+        static std::string typeToString(u_int8_t type) {
+            switch (type) {
+                case SYMBOL_LIT_INT:
+                    return "lit_int";
+                case SYMBOL_LIT_STRING:
+                    return "lit_string";
+                case SYMBOL_LIT_CHAR:
+                    return "lit_char";
+                case SYMBOL_IDENTIFIER:
+                    return "identifier";
+                case SYMBOL_VARIABLE:
+                    return "variable";
+                case SYMBOL_FUNCTION:
+                    return "function";
+                case SYMBOL_VECTOR:
+                    return "vector";
+                case DATATYPE_INT:
+                    return "int";
+                case DATATYPE_CHAR:
+                    return "char";
+                case DATATYPE_NONE:
+                    return "none";
+                case DATATYPE_BOOL:
+                    return "bool";
+                default:
+                    return "unknown";
+            }
         }
 };
 
