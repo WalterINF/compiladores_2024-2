@@ -85,6 +85,7 @@ class SymbolTable {
         Symbol* makeTemp();
         Symbol* makeLabel();
 
+
         Symbol get(std::string name);
 
         friend std::ostream& operator<<(std::ostream& os, const SymbolTable& table);

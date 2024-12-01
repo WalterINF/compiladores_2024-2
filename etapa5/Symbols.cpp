@@ -68,6 +68,14 @@ Symbol *SymbolTable::makeTemp() {
 }
 
 Symbol *SymbolTable::makeLabel() {
-
+    static int serial = 0;
+    static char buffer[128];
+    sprintf(buffer, "label%d", serial++);
+    table.insert(std::pair<std::string, Symbol>(buffer, Symbol{buffer,SYMBOL_VARIABLE}));
+    auto it = table.find(buffer);
+    if (it != table.end()) {
+        return &it->second;
+    }
+    throw std::runtime_error("Symbol not found");
 }
 
