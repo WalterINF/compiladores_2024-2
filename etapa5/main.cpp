@@ -19,7 +19,7 @@ Node *getAst();
 int isRunning();
 
 int main(int argc, char** argv){
-	if (argc < 2){
+	if (argc < 1){
 		std::cout << "Número incorreto de argumentos" << std::endl;
 		exit(1);
     }
@@ -38,11 +38,8 @@ int main(int argc, char** argv){
         //std::cout << symbol_table;
 
     }
-
 	Node* tree = getAst();
-
 	Tac *result = nullptr;
-
 	result = Tac::generateCode(tree);
 	Tac* acc = result;
 	while(acc) {
@@ -53,11 +50,11 @@ int main(int argc, char** argv){
 		result->printTac();
 		result = result->next;
 	}
+	//tree->printTree();
 
+	//tree->decompileToFile(argv[2]);
 
-	tree->printTree();
-
-	tree->decompileToFile(argv[2]);
+	//std::cout << symbol_table;
 
 
 	return 0;

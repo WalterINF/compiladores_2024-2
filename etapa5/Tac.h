@@ -55,13 +55,13 @@ public:
 
     static Tac *createIfThen(Tac *t1, Tac *t2);
 
-    static Tac *createBinOp(int type, Tac* sons[]);
+    static Tac *createBinOp(int type, Tac* code[]);
 
     static Tac *joinTV(Tac *tac1, Tac *tac2);
 
     static Tac *generateCode(Node *root);
 
-    static Tac *createFunction(Tac* symbol, Tac* params, Tac* code);
+    static Tac *createFunction(const Tac* symbol, Tac* params, Tac* code);
 
 private:
 

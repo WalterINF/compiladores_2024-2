@@ -32,6 +32,8 @@ class Symbol {
         std::string name;
         int type;
         u_int8_t datatype;
+
+    Symbol(int type, std::string name, int datatype);
         /* probably more data here in future steps */
 
         Symbol(char* name, int type) {
@@ -78,17 +80,15 @@ class SymbolTable {
     public:
         SymbolTable() {}
 
-        Symbol * insert(Symbol symbol);
-        void print();
+        Symbol * insert(char* name, int type);
+        void print() const;
         void clear();
-        int length();
-        Symbol *symbolAt(int index);
         std::map<std::string, Symbol> getTable();
         Symbol* makeTemp();
         Symbol* makeLabel();
 
 
-        Symbol get(std::string name);
+        Symbol *get(const std::string& name);
 
         friend std::ostream& operator<<(std::ostream& os, const SymbolTable& table);
     private:

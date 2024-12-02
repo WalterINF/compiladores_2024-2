@@ -7,6 +7,7 @@ int var1 = #0;
 int main(){
     var1 = #4;
 
+    var1 = #4 + #5;
     return #0;
 }
 

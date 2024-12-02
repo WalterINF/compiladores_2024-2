@@ -4,8 +4,9 @@
 
 #include "Tac.h"
 
-Tac::Tac(int type,Symbol *res, Symbol *op1, Symbol *op2) {
+Tac::Tac(int type, Symbol *res, Symbol *op1, Symbol *op2) {
     this->type = type;
+    this->res = res;
     this->op1 = op1;
     this->op2 = op2;
     this->next = nullptr;
@@ -51,13 +52,12 @@ std::string Tac::toString() {
 }
 
 void Tac::printTac() {
+    if (this->type == TAC_SYMBOL) return;
 
-    if(this->type == TAC_SYMBOL) return;
-
-    fprintf(stderr, "TAC(%s,",this->toString().c_str());
-    this->res?fprintf(stderr, "%s, ", this->res->name.c_str()):fprintf(stderr, "0, ");
-    this->op1?fprintf(stderr, "%s, ", this->op1->name.c_str()):fprintf(stderr, "0, ");
-    this->op2?fprintf(stderr, "%s", this->op2->name.c_str()):fprintf(stderr, "0");
+    fprintf(stderr, "TAC(%s,", this->toString().c_str());
+    this->res ? fprintf(stderr, "%s, ", this->res->name.c_str()) : fprintf(stderr, "null, ");
+    this->op1 ? fprintf(stderr, "%s, ", this->op1->name.c_str()) : fprintf(stderr, "null, ");
+    this->op2 ? fprintf(stderr, "%s", this->op2->name.c_str()) : fprintf(stderr, "null");
     fprintf(stderr, ")\n");
 }
 
@@ -98,65 +98,65 @@ Tac *Tac::generateCode(Node *root) {
 
     switch (root->type) {
         case NODE_SYMBOL:
-            result = new Tac(TAC_SYMBOL, root->symbol, nullptr,nullptr);
+            result = new Tac(TAC_SYMBOL, root->symbol, nullptr, nullptr);
             break;
         case NODE_SUM:
-            result = createBinOp(TAC_ADD,code);
+            result = createBinOp(TAC_ADD, code);
             break;
         case NODE_MUL:
-            result = createBinOp(TAC_MUL,code);
-        break;
+            result = createBinOp(TAC_MUL, code);
+            break;
         case NODE_DIV:
-            result = createBinOp(TAC_DIV,code);
-        break;
+            result = createBinOp(TAC_DIV, code);
+            break;
         case NODE_SUB:
-            result = createBinOp(TAC_SUB,code);
-        break;
+            result = createBinOp(TAC_SUB, code);
+            break;
         case NODE_AND:
-            result = createBinOp(TAC_AND,code);
-        break;
+            result = createBinOp(TAC_AND, code);
+            break;
         case NODE_OR:
-            result = createBinOp(TAC_OR,code);
-        break;
+            result = createBinOp(TAC_OR, code);
+            break;
         case NODE_EQ:
-            result = createBinOp(TAC_EQ,code);
-        break;
+            result = createBinOp(TAC_EQ, code);
+            break;
         case NODE_LESS:
-            result = createBinOp(TAC_LESS,code);
-        break;
+            result = createBinOp(TAC_LESS, code);
+            break;
         case NODE_GREATER:
-            result = createBinOp(TAC_GREATER,code);
-        break;
+            result = createBinOp(TAC_GREATER, code);
+            break;
         case NODE_ATTR:
-            result = joinTV(code[0],new Tac(TAC_MOVE,root->symbol,nullptr,nullptr));
+            result = joinTV(code[0], new Tac(TAC_MOVE, root->symbol, code[0] ? code[0]->res : nullptr, nullptr));
             break;
         case NODE_IF:
-            result = createIfThen(code[0],code[1]);
+            result = createIfThen(code[0], code[1]);
             break;
         case NODE_DECFUNC:
             result = createFunction(new Tac(TAC_SYMBOL, root->symbol, nullptr, nullptr), code[1], code[2]);
-        break;
-        case NODE_DECVAR:
             break;
         case NODE_READ:
-            result = new Tac(TAC_READ, root->symbol, nullptr,nullptr);
-        break;
+            result = new Tac(TAC_READ, root->symbol, nullptr, nullptr);
+            break;
         case NODE_RETURN:
-            return joinTV(code[0], new Tac(TAC_RETURN,code[0]?code[0]->res:nullptr,nullptr,nullptr));
-
+            result = joinTV(code[0], new Tac(TAC_RETURN, code[0] ? code[0]->res : nullptr, nullptr, nullptr));
+            break;
         default:
-            result = joinTV(code[0],joinTV(code[1],joinTV(code[2],code[3])));
+            result = joinTV(code[0], joinTV(code[1], joinTV(code[2], code[3])));
+            break;
     }
-
     return result;
 }
 
-Tac *Tac::createBinOp(int type, Tac *sons[]) {
-    Symbol * op1;
-    Symbol * op2;
-    if(sons[0]) op1 = sons[0]->res; else op1 = 0;
-    if(sons[1]) op2 = sons[1]->res; else op2 = 0;
-    return joinTV(sons[0], joinTV(sons[1], new Tac(type, symbol_table.makeTemp(), op1, op2)));
+Tac *Tac::createBinOp(int type, Tac *code[]) {
+    const auto newtac = new Tac(
+        type,
+        symbol_table.makeTemp(),
+        code[0] ? code[0]->res : nullptr,
+        code[1] ? code[1]->res : nullptr);
+    Tac *result = joinTV(code[0], joinTV(code[1], newtac));
+    return result;
 }
 
 Tac *Tac::createIfThen(Tac *t1, Tac *t2) {
@@ -168,11 +168,10 @@ Tac *Tac::createIfThen(Tac *t1, Tac *t2) {
     jumptac->prev = t1;
     labeltac = new Tac(TAC_LABEL, newlabel, nullptr, nullptr);
     labeltac->prev = t2;
-    return joinTV(jumptac,labeltac);
-
+    return joinTV(jumptac, labeltac);
 }
 
-Tac *Tac::createFunction(Tac* symbol, Tac* params, Tac* code){
-    return joinTV(joinTV(joinTV(new Tac(TAC_BEGINFUN, symbol->res, 0, 0), params), code), new Tac(TAC_ENDFUN, symbol->res, 0, 0));
+Tac *Tac::createFunction(const Tac *symbol, Tac *params, Tac *code) {
+    return joinTV(joinTV(joinTV(new Tac(TAC_BEGINFUN, symbol->res, nullptr, nullptr), params), code),
+                  new Tac(TAC_ENDFUN, symbol->res, nullptr, nullptr));
 }
-

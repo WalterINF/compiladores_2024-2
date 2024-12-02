@@ -30,9 +30,9 @@ read                       { return KW_READ; }
 print                      { return KW_PRINT; }
 return                     { return KW_RETURN; }
 
-[#][0-9]+                  { yylval.symbol = symbol_table.insert(Symbol(&yytext[0], SYMBOL_LIT_INT)); return LIT_INT; }
-\"([^\"\\]|\\.)*\"         { yylval.symbol = symbol_table.insert(Symbol(&yytext[0], SYMBOL_LIT_STRING)); return LIT_STRING; }
-'(.|\\.)'                  { yylval.symbol = symbol_table.insert(Symbol(&yytext[0], SYMBOL_LIT_CHAR)); return LIT_CHAR; }
+[#][0-9]+                  { yylval.symbol = symbol_table.insert(&yytext[0], SYMBOL_LIT_INT); return LIT_INT; }
+\"([^\"\\]|\\.)*\"         { yylval.symbol = symbol_table.insert(&yytext[0], SYMBOL_LIT_STRING); return LIT_STRING; }
+'(.|\\.)'                  { yylval.symbol = symbol_table.insert(&yytext[0], SYMBOL_LIT_CHAR); return LIT_CHAR; }
 
 [,;:()[\]{}=+\-*/%<>&|~]   { return (int)yytext[0]; }
 \/\/(.*?)\n                { line_count++; }
@@ -42,7 +42,7 @@ return                     { return KW_RETURN; }
 <MULTILINE_COMMENT>"**/"   { BEGIN(INITIAL); }
 <MULTILINE_COMMENT>.       { }
 
-[a-zA-Z0-9]+               { yylval.symbol = symbol_table.insert(Symbol(&yytext[0], SYMBOL_IDENTIFIER)); return TK_IDENTIFIER; }
+[a-zA-Z0-9]+               { yylval.symbol = symbol_table.insert(&yytext[0], SYMBOL_IDENTIFIER); return TK_IDENTIFIER; }
 
 .                          { return TOKEN_ERROR; }
 
