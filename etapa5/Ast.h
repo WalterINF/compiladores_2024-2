@@ -9,8 +9,6 @@
 
 #include "Symbols.h"
 #include <string>
-#include <queue>
-#include <vector>
 
 #define NODE_SYMBOL 0
 #define NODE_LDEC 1

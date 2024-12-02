@@ -2,8 +2,8 @@ CXX = g++
 CXXFLAGS = -Wall -std=c++11
 TARGET_NAME = etapa5
 
-$(TARGET_NAME): y.tab.o lex.yy.o Symbols.o Semantic.o main.o Ast.o
-	$(CXX) -o $(TARGET_NAME) y.tab.o lex.yy.o Semantic.o Symbols.o main.o
+$(TARGET_NAME): y.tab.o lex.yy.o Symbols.o Ast.o  main.o Tac.o
+	$(CXX) -o $(TARGET_NAME) y.tab.o lex.yy.o Ast.o  Symbols.o main.o Tac.o
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $< -c

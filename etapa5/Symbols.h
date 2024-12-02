@@ -25,6 +25,8 @@ Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
 #define DATATYPE_BOOL 11
 #define DATATYPE_NONE 10
 
+#define SYMBOL_LABEL 12
+
 class Symbol {
     public:
         std::string name;

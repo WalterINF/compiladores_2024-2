@@ -6,9 +6,8 @@ Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
 #include <iostream>
 #include <stdio.h>
 #include <string>
-#include "Symbols.h"
 #include "Ast.h"
-#include "Semantic.h"
+#include "Tac.h"
 
 int yylex();
 extern char *yytext;
@@ -42,18 +41,19 @@ int main(int argc, char** argv){
 
 	Node* tree = getAst();
 
-	Semantic::check_and_set_declarations(tree);
-	Semantic::check_types(tree);
-	Semantic::check_undeclared(symbol_table);
-	Semantic::check_operands(tree);
-	Semantic::check_usage(tree);
-	Semantic::check_calls(tree,tree);
+	Tac *result = nullptr;
 
-	int semanticErrors = Semantic::getSemanticErrors();
-	if(semanticErrors > 0) {
-		std::cout << "Error: " << semanticErrors << " error(s) found in file." << std::endl;
-		exit(4);
+	result = Tac::generateCode(tree);
+	Tac* acc = result;
+	while(acc) {
+		result = acc;
+		acc = acc->prev;
 	}
+	while(result) {
+		result->printTac();
+		result = result->next;
+	}
+
 
 	tree->printTree();
 

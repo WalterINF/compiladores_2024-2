@@ -5,7 +5,6 @@ Integrantes: Sandro Rudiero Saibro Viegas, Walter Frank
 
 #include "Symbols.h"
 
-#include <Semantic.h>
 
 /* Inserts a Symbol object into the table */
 Symbol *SymbolTable::insert(Symbol symbol) {
@@ -71,7 +70,7 @@ Symbol *SymbolTable::makeLabel() {
     static int serial = 0;
     static char buffer[128];
     sprintf(buffer, "label%d", serial++);
-    table.insert(std::pair<std::string, Symbol>(buffer, Symbol{buffer,SYMBOL_VARIABLE}));
+    table.insert(std::pair<std::string, Symbol>(buffer, Symbol{buffer,SYMBOL_LABEL}));
     auto it = table.find(buffer);
     if (it != table.end()) {
         return &it->second;
