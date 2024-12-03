@@ -53,7 +53,9 @@ public:
 
     void append(Tac *new_tac);
 
-    static Tac *createIfThen(Tac *t1, Tac *t2);
+    static Tac *createIfThen(Tac* code[]);
+
+    static Tac *createIfThenElse(Tac* code[]);
 
     static Tac *createBinOp(int type, Tac* code[]);
 
@@ -62,6 +64,8 @@ public:
     static Tac *generateCode(Node *root);
 
     static Tac *createFunction(const Tac* symbol, Tac* params, Tac* code);
+
+    static Tac *createWhile(Tac *code[]);
 
 private:
 

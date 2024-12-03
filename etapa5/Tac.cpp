@@ -13,7 +13,6 @@ Tac::Tac(int type, Symbol *res, Symbol *op1, Symbol *op2) {
     this->prev = nullptr;
 }
 
-
 std::string Tac::toString() {
     switch (type) {
         case TAC_SYMBOL:
@@ -24,6 +23,16 @@ std::string Tac::toString() {
             return "ADD";
         case TAC_MUL:
             return "MUL";
+        case TAC_DIV:
+            return "DIV";
+        case TAC_SUB:
+            return "SUB";
+        case TAC_EQ:
+            return "EQ";
+        case TAC_LESS:
+            return "LESS";
+        case TAC_GREATER:
+            return "GREATER";
         case TAC_LABEL:
             return "LABEL";
         case TAC_BEGINFUN:
@@ -63,13 +72,11 @@ void Tac::printTac() {
 
 void Tac::append(Tac *new_tac) {
     if (!new_tac) return;
-    Tac *curr = next;
-    while (curr) {
+    Tac *curr = this;
+    while (curr->next) {
         curr = curr->next;
     }
-    if (curr) {
-        curr->next = new_tac;
-    }
+    curr->next = new_tac;
 }
 
 Tac *Tac::joinTV(Tac *tac1, Tac *tac2) {
@@ -131,7 +138,10 @@ Tac *Tac::generateCode(Node *root) {
             result = joinTV(code[0], new Tac(TAC_MOVE, root->symbol, code[0] ? code[0]->res : nullptr, nullptr));
             break;
         case NODE_IF:
-            result = createIfThen(code[0], code[1]);
+            result = createIfThen(code);
+            break;
+        case NODE_IFELSE:
+            result = createIfThenElse(code);
             break;
         case NODE_DECFUNC:
             result = createFunction(new Tac(TAC_SYMBOL, root->symbol, nullptr, nullptr), code[1], code[2]);
@@ -141,6 +151,9 @@ Tac *Tac::generateCode(Node *root) {
             break;
         case NODE_RETURN:
             result = joinTV(code[0], new Tac(TAC_RETURN, code[0] ? code[0]->res : nullptr, nullptr, nullptr));
+            break;
+        case NODE_WHILE:
+            result = createWhile(code);
             break;
         default:
             result = joinTV(code[0], joinTV(code[1], joinTV(code[2], code[3])));
@@ -159,16 +172,41 @@ Tac *Tac::createBinOp(int type, Tac *code[]) {
     return result;
 }
 
-Tac *Tac::createIfThen(Tac *t1, Tac *t2) {
+Tac *Tac::createWhile(Tac *code[]) {
     Tac *jumptac = nullptr;
     Tac *labeltac = nullptr;
     Symbol *newlabel = nullptr;
     newlabel = symbol_table.makeLabel();
-    jumptac = new Tac(TAC_JUMP, newlabel, t1->res, nullptr);
-    jumptac->prev = t1;
+    jumptac = new Tac(TAC_JUMP, newlabel, code[0] ? code[0]->res : nullptr, nullptr);
     labeltac = new Tac(TAC_LABEL, newlabel, nullptr, nullptr);
-    labeltac->prev = t2;
-    return joinTV(jumptac, labeltac);
+    return joinTV(code[0], joinTV(jumptac, joinTV(code[1], labeltac)));
+}
+
+
+Tac *Tac::createIfThen(Tac *code[]) {
+    Tac *jumptac = nullptr;
+    Tac *labeltac = nullptr;
+    Symbol *newlabel = nullptr;
+    newlabel = symbol_table.makeLabel();
+    jumptac = new Tac(TAC_IFZ, newlabel, code[0] ? code[0]->res : nullptr, nullptr);
+    labeltac = new Tac(TAC_LABEL, newlabel, nullptr, nullptr);
+    return joinTV(code[0], joinTV(jumptac, joinTV(code[1], labeltac)));
+}
+
+Tac *Tac::createIfThenElse(Tac *code[]) {
+    Tac *iftac = nullptr;
+    Tac *jumptac = nullptr;
+    Tac *labeltac = nullptr;
+    Tac *exittac = nullptr;
+    Symbol *newlabel = nullptr;
+    Symbol *exitlabel = nullptr;
+    newlabel = symbol_table.makeLabel();
+    exitlabel = symbol_table.makeLabel();
+    iftac = new Tac(TAC_IFZ, newlabel, code[0] ? code[0]->res : nullptr, nullptr);
+    labeltac = new Tac(TAC_LABEL, newlabel, nullptr, nullptr);
+    exittac = new Tac(TAC_LABEL, exitlabel, nullptr, nullptr);
+    jumptac = new Tac(TAC_JUMP, exitlabel, nullptr, nullptr);
+    return joinTV(code[0], joinTV(iftac, joinTV(code[1], joinTV(jumptac, joinTV(labeltac, joinTV(code[2], exittac))))));
 }
 
 Tac *Tac::createFunction(const Tac *symbol, Tac *params, Tac *code) {
