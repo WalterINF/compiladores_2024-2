@@ -26,13 +26,13 @@ extern SymbolTable symbol_table;
 #define TAC_JUMP 15
 #define TAC_CALL 16
 #define TAC_ARG 17
+#define TAC_ARGPOP 24
 #define TAC_RET 18
 #define TAC_PRINT 19
 #define TAC_READ 20
 #define TAC_END 21
 #define TAC_OR 22
 #define TAC_AND 23
-#define TAC_RETURN 24
 
 
 class Tac {
@@ -42,33 +42,35 @@ public:
     Symbol *op1;
     Symbol *op2;
 
-    Tac *prev;
-    Tac *next;
-
-    Tac(int type,Symbol *res, Symbol *op1, Symbol *op2);
+    Tac(int type, Symbol *res, Symbol *op1, Symbol *op2);
 
     void printTac();
+
+    void printList();
 
     std::string toString();
 
     void append(Tac *new_tac);
 
-    static Tac *createIfThen(Tac* code[]);
-
-    static Tac *createIfThenElse(Tac* code[]);
-
-    static Tac *createBinOp(int type, Tac* code[]);
-
-    static Tac *joinTV(Tac *tac1, Tac *tac2);
-
     static Tac *generateCode(Node *root);
 
-    static Tac *createFunction(const Tac* symbol, Tac* params, Tac* code);
+private:
+    Tac *prev;
+    Tac *next;
+
+    static Tac *generateCodeBody(Node *root);
+
+    static Tac *createFunction(const Tac *symbol, Tac *params, Tac *code);
 
     static Tac *createWhile(Tac *code[]);
 
-private:
+    static Tac *createIfThen(Tac *code[]);
 
+    static Tac *createIfThenElse(Tac *code[]);
+
+    static Tac *createBinOp(int type, Tac *code[]);
+
+    static Tac *joinTV(Tac *tac1, Tac *tac2);
 };
 
 

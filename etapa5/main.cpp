@@ -13,14 +13,14 @@ int yylex();
 extern char *yytext;
 extern FILE *yyin;
 extern int yyparse();
-extern SymbolTable symbol_table;
 int getLineNumber();
 Node *getAst();
 int isRunning();
 
+
 int main(int argc, char** argv){
-	if (argc < 1){
-		std::cout << "Número incorreto de argumentos" << std::endl;
+	if (argc < 2){
+		std::cout <<  "Usage: ./etapa5 [FILEPATH]" << std::endl;
 		exit(1);
     }
 
@@ -30,32 +30,15 @@ int main(int argc, char** argv){
       	exit(2);
     }
 
-    if(yyparse()){
+    if(yyparse())
       exit(3);
-    } else {
-    	std::cout << "Parsed Successfully!" << std::endl;
-        //printf("----------Tabela de simbolos ---------\n");
-        //std::cout << symbol_table;
 
-    }
+	std::cout << "Parsed Successfully!" << std::endl;
+
 	Node* tree = getAst();
 	Tac *result = nullptr;
 	result = Tac::generateCode(tree);
-	Tac* acc = result;
-	while(acc) {
-		result = acc;
-		acc = acc->prev;
-	}
-	while(result) {
-		result->printTac();
-		result = result->next;
-	}
-	//tree->printTree();
-
-	//tree->decompileToFile(argv[2]);
-
-	//std::cout << symbol_table;
-
+	result->printList();
 
 	return 0;
 }

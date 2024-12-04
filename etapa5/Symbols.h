@@ -95,4 +95,5 @@ class SymbolTable {
         std::map<std::string, Symbol> table;
 };
 
+
 #endif //SYMBOLS_H

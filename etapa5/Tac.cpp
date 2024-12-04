@@ -53,8 +53,10 @@ std::string Tac::toString() {
             return "PRINT";
         case TAC_READ:
             return "READ";
-        case TAC_RETURN:
-            return "RETURN";
+        case TAC_END:
+            return "END";
+        case TAC_ARGPOP:
+            return "ARGPOP";
         default:
             return "UNKNOWN";
     }
@@ -69,6 +71,20 @@ void Tac::printTac() {
     this->op2 ? fprintf(stderr, "%s", this->op2->name.c_str()) : fprintf(stderr, "null");
     fprintf(stderr, ")\n");
 }
+
+void Tac::printList() {
+    Tac *acc = this;
+    Tac *result = nullptr;
+    while (acc) {
+        result = acc;
+        acc = acc->prev;
+    }
+    while (result) {
+        result->printTac();
+        result = result->next;
+    }
+}
+
 
 void Tac::append(Tac *new_tac) {
     if (!new_tac) return;
@@ -94,16 +110,24 @@ Tac *Tac::joinTV(Tac *tac1, Tac *tac2) {
 }
 
 Tac *Tac::generateCode(Node *root) {
+    Tac *body = generateCodeBody(root);
+    return joinTV(body,new Tac(TAC_END,nullptr,nullptr,nullptr));
+}
+
+Tac *Tac::generateCodeBody(Node *root) {
     Tac *result = nullptr;
     Tac *code[4] = {nullptr, nullptr, nullptr, nullptr};
 
     if (!root) return nullptr;
 
     for (int i = 0; i < 4; i++) {
-        code[i] = generateCode(root->children[i]);
+        code[i] = generateCodeBody(root->children[i]);
     }
 
     switch (root->type) {
+        case NODE_DECVAR:
+            result = joinTV(code[0], new Tac(TAC_MOVE, root->symbol, code[1] ? code[1]->res : nullptr, nullptr));
+            break;
         case NODE_SYMBOL:
             result = new Tac(TAC_SYMBOL, root->symbol, nullptr, nullptr);
             break;
@@ -150,11 +174,30 @@ Tac *Tac::generateCode(Node *root) {
             result = new Tac(TAC_READ, root->symbol, nullptr, nullptr);
             break;
         case NODE_RETURN:
-            result = joinTV(code[0], new Tac(TAC_RETURN, code[0] ? code[0]->res : nullptr, nullptr, nullptr));
+            result = joinTV(code[0], new Tac(TAC_RET, code[0] ? code[0]->res : nullptr, nullptr, nullptr));
             break;
         case NODE_WHILE:
             result = createWhile(code);
             break;
+        case NODE_CALL:
+            result = joinTV(code[0], new Tac(TAC_CALL, root->symbol, code[0] ? code[0]->res : nullptr, nullptr));
+            break;
+        case NODE_LCPTAIL:
+        case NODE_LCPARAMS:
+            result = joinTV(new Tac(TAC_ARG, code[0] ? code[0]->res : nullptr,nullptr, nullptr),code[1]);
+            break;
+        case NODE_PRINT_VEC:
+            result = joinTV(new Tac(TAC_PRINT, root->symbol, code[0] ? code[0]->res : nullptr, nullptr),joinTV(code[0],code[1]));
+            break;
+        case NODE_PARAM:
+            result = new Tac(TAC_ARGPOP, root->symbol,nullptr,nullptr);
+            break;
+        case NODE_LPARAMS:
+        case NODE_LPTAIL:
+            result = joinTV(code[0],code[1]);
+            break;
+
+
         default:
             result = joinTV(code[0], joinTV(code[1], joinTV(code[2], code[3])));
             break;

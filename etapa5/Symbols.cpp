@@ -23,8 +23,6 @@ Symbol *SymbolTable::insert(char* name, int type) {
     return this->get(name);
 }
 
-
-
 /* Prints the table */
 void SymbolTable::print() const {
     for (const auto& pair : table) {
